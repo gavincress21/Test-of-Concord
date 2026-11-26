@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book of Concord Quiz</title>
+<style>
+:root{
+  --bg:#fbfbfd; --panel:#ffffff; --ink:#14213d; --muted:#5a6580; --line:#d5dae6;
+  --accent:#1f3a6b; --accent-ink:#ffffff; --red:#a4262c; --gold:#b8921e;
+  --good:#1e7a4a; --good-bg:#e3f4ea; --bad:#a4262c; --bad-bg:#fbe7e8; --sel:#e8eefb;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1525; --panel:#16203a; --ink:#e8ecf5; --muted:#9aa6c2; --line:#2b3860;
+    --accent:#8fb0f0; --accent-ink:#0e1525; --red:#ee7a80; --gold:#d9b648;
+    --good:#6fd39b; --good-bg:#14352a; --bad:#ee7a80; --bad-bg:#3b1c22; --sel:#22305a;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Palatino,"Palatino Linotype","Book Antiqua",Georgia,serif;line-height:1.55;font-size:17px}
+main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--gold);padding-bottom:12px;margin-bottom:22px}
+header svg{flex:none}
+h1{font-size:1.45rem;margin:0;line-height:1.2}
+header p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+h2{font-size:1.15rem;margin:0 0 10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:16px}
+label.row{display:flex;align-items:center;gap:10px;padding:6px 0;cursor:pointer}
+label.row .n{margin-left:auto;color:var(--muted);font-size:.9rem}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent);width:18px;height:18px}
+select,input[type=number]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.opts{display:grid;gap:4px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:4px;padding:10px 20px;font-weight:600}
+.btn.alt{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.choice:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.link{background:none;border:0;color:var(--accent);text-decoration:underline;padding:0;font-size:.9rem}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:.88rem;margin-bottom:14px}
+.qtext{font-size:1.15rem;margin:0 0 16px}
+.choice{display:flex;gap:12px;width:100%;text-align:left;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:11px 13px;margin-bottom:8px}
+.choice .l{font-weight:700;color:var(--accent);min-width:1.2em}
+.choice:hover:not(:disabled){background:var(--sel)}
+.choice.sel{background:var(--sel);border-color:var(--accent)}
+.choice.good{background:var(--good-bg);border-color:var(--good)}
+.choice.bad{background:var(--bad-bg);border-color:var(--bad)}
+.choice:disabled{cursor:default}
+.fb{border-left:4px solid var(--gold);padding:8px 14px;margin:14px 0;background:var(--panel)}
+.fb b.ok{color:var(--good)} .fb b.no{color:var(--bad)}
+.fb .ref{color:var(--muted);font-size:.92rem}
+.score{font-size:2.4rem;font-weight:700;margin:0}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+td:last-child,th:last-child{text-align:right}
+.miss{border-top:1px solid var(--line);padding:12px 0}
+.miss p{margin:3px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+kbd{border:1px solid var(--line);border-radius:3px;padding:0 5px;font-size:.8rem}
+
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;padding:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:5px;font-weight:600}
+.tab.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.trow{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.trow:first-of-type{border-top:0}
+.trow .t{flex:1}
+.trow .sub{color:var(--muted);font-size:.88rem;display:block}
+.btn.sm{padding:6px 16px;font-size:.92rem}
+.tabs .tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.title{color:var(--muted);font-size:.9rem;margin:0 0 6px}
+
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.card{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:12px;color:var(--muted);font-size:.9rem}
+.card b{display:block;font-size:1.5rem;color:var(--ink);line-height:1.2}
+.meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:var(--accent)}
+.drow{padding:8px 0;border-top:1px solid var(--line)}
+.drow:first-of-type{border-top:0}
+.sub{color:var(--muted);font-size:.88rem;display:block}
+.hint{color:var(--muted);font-size:.9rem;margin:8px 0 0}
+.msg{color:var(--good);font-size:.9rem}
+.spark{display:flex;align-items:flex-end;gap:4px;height:80px;border-bottom:1px solid var(--line)}
+.spark i{flex:1;background:var(--accent);min-height:2px;border-radius:2px 2px 0 0}
+input[type=text]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);max-width:100%}
+@media (min-width:600px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+    <circle cx="23" cy="23" r="21" fill="#1f3a6b" stroke="#b8921e" stroke-width="3"/>
+    <g fill="#fff">
+      <circle cx="23" cy="12" r="6.5"/><circle cx="33.5" cy="19.5" r="6.5"/><circle cx="29.5" cy="32" r="6.5"/>
+      <circle cx="16.5" cy="32" r="6.5"/><circle cx="12.5" cy="19.5" r="6.5"/>
+    </g>
+    <circle cx="23" cy="23" r="6" fill="#a4262c"/>
+  </svg>
+  <div>
+    <h1>Book of Concord Quiz</h1>
+    <p id="subtitle"></p>
+  </div>
+</header>
+<div id="app"></div>
+</main>
+
+<script>
+/* =====================================================================
+   QUESTION BANK
+
+   HOW TO ADD QUESTIONS
+   Add lines inside the RAW array below. Two helpers:
+
+   M(question, [CORRECT first, wrong, wrong, wrong, wrong], ref, note)
+       The correct answer goes FIRST; the app places it at a stable
+       pseudo-random letter. Use this by default.
+
+   N(question, [A,B,C,D,E], "C", ref, note)
+       Use when choices have a natural order (years, counts).
+
+   Put  T(`Test title`, `Document name`),  before a group to start a new
+   ready-made test. A new test title or document name shows up on the
+   setup screen automatically.
+   ===================================================================== */
+const Q = (section, q, choices, ans, ref, note="") =>
+  ({section, q, choices, answer: "ABCDE".indexOf(ans), ref, note});
+let CUR_U = "", CUR_S = "";
+const T = (unit, section) => { CUR_U = unit; CUR_S = section; return null; };
+const N = (q, choices, ans, ref, note="") =>
+  ({section: CUR_S, unit: CUR_U, q, choices, answer: "ABCDE".indexOf(ans), ref, note});
+const H = s => { let h = 7; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; };
+const M = (q, c, ref, note="") => {
+  const p = H(q) % 5, rest = c.slice(1);
+  rest.splice(p, 0, c[0]);
+  return {section: CUR_S, unit: CUR_U, q, choices: rest, answer: p, ref, note};
+};
+
+const RAW = [
+/* ================= ORIGINAL 50-QUESTION SURVEY ================= */
+
+
+/* ---------- Ecumenical Creeds ---------- */
+Q(`Ecumenical Creeds`, `Which creed, known by its Latin opening words Quicunque vult, begins by declaring that whoever wishes to be saved must hold the catholic faith?`,
+  [`The Apostles' Creed`,`The Nicene Creed`,`The Athanasian Creed`,`The Definition of Chalcedon`,`The Creed of Epiphanius`], `C`, `Athanasian Creed`, `Quicunque vult is its opening.`),
+Q(`Ecumenical Creeds`, `Which council first affirmed that the Son is homoousios ("of one substance") with the Father?`,
+  [`Ephesus (431)`,`Nicaea (325)`,`Chalcedon (451)`,`Constantinople II (553)`,`Antioch (341)`], `B`, `Nicene Creed`, `Nicaea (325) affirmed homoousios.`),
+
+/* ---------- Augsburg Confession ---------- */
+Q(`Augsburg Confession`, `The Augsburg Confession was presented to Emperor Charles V in what year?`,
+  [`1517`,`1521`,`1529`,`1530`,`1537`], `D`, `AC, Preface`, `Presented June 25, 1530.`),
+Q(`Augsburg Confession`, `Because Luther was under the imperial ban and remained at Coburg, who was the principal author of the Augsburg Confession?`,
+  [`Martin Luther`,`Philip Melanchthon`,`Justus Jonas`,`Johannes Bugenhagen`,`Georg Spalatin`], `B`, `AC, Preface`, `Melanchthon was the principal author; Luther remained at Coburg.`),
+Q(`Augsburg Confession`, `AC II (Original Sin) condemns those who deny that original depravity is truly sin. Whom does the Latin text name?`,
+  [`The Arians`,`The Donatists`,`The Manichaeans`,`The Montanists`,`The Pelagians`], `E`, `AC II`, `The Latin text names the Pelagians.`),
+Q(`Augsburg Confession`, `According to AC IV, people are justified freely for Christ's sake through:`,
+  [`Faith`,`Infused love`,`Works of satisfaction`,`Monastic perfection`,`Contrition and penance alone`], `A`, `AC IV`, `Justification by grace for Christ's sake through faith.`),
+Q(`Augsburg Confession`, `According to AC V, the Holy Spirit works faith, where and when it pleases God, through:`,
+  [`The Law and good works`,`Direct revelation apart from external means`,`The Gospel and the sacraments`,`Apostolic succession`,`The decrees of councils`], `C`, `AC V`, `The Gospel and sacraments are the means by which the Spirit is given.`),
+Q(`Augsburg Confession`, `According to AC VII, what is sufficient for the true unity of the church?`,
+  [`Uniform ceremonies in every place`,`Common obedience to the bishop of Rome`,`An unbroken episcopal succession`,`Agreement on the teaching of the Gospel and the administration of the sacraments`,`A shared monastic rule`], `D`, `AC VII`, `Uniform ceremonies are not required.`),
+Q(`Augsburg Confession`, `AC IX teaches that infants are to be baptized, and condemns the contrary teaching of:`,
+  [`The Arians`,`The Donatists`,`The Novatians`,`The Montanists`,`The Anabaptists`], `E`, `AC IX`, `The Anabaptists are condemned.`),
+Q(`Augsburg Confession`, `Which Latin phrase in AC XIV describes who may publicly teach or administer the sacraments in the church?`,
+  [`ex opere operato`,`rite vocatus`,`sola fide`,`simul iustus et peccator`,`communicatio idiomatum`], `B`, `AC XIV`, `Rite vocatus means "properly called."`),
+Q(`Augsburg Confession`, `According to AC XVIII, without the Holy Spirit the human will is able to:`,
+  [`Merit the first grace`,`Fear, love, and trust God above all things`,`Produce civil righteousness`,`Cooperate in its own conversion`,`Keep the First Table of the Law`], `C`, `AC XVIII`, `The will has some liberty in civil righteousness but cannot work spiritual righteousness without the Spirit.`),
+Q(`Augsburg Confession`, `AC XX insists that good works are to be done because:`,
+  [`They merit the forgiveness of sins`,`They satisfy for temporal punishment`,`They increase one's store of merit`,`It is God's will`,`They guarantee final perseverance`], `D`, `AC XX`, `Works are done because they are God's will, not to merit grace.`),
+Q(`Augsburg Confession`, `According to AC XXI, the saints are remembered so that we may:`,
+  [`Strengthen our faith and imitate their faith and good works according to our calling`,`Apply their surplus merits to ourselves`,`Obtain their intercession as mediators`,`Keep their feast days as works that earn grace`,`Honor their relics with special worship`], `A`, `AC XXI`, `Remembered for faith and imitation, not invoked as mediators.`),
+Q(`Augsburg Confession`, `Which abuse does AC XXIII address?`,
+  [`Withholding the cup from the laity`,`Compulsory enumeration of sins`,`The prohibition of marriage for priests`,`Monastic vows`,`Distinctions of foods`], `C`, `AC XXIII`, `The marriage of priests.`),
+Q(`Augsburg Confession`, `According to AC XXVIII, the power of the bishops according to the Gospel is a power to:`,
+  [`Depose secular rulers`,`Establish new articles of faith`,`Impose ceremonies necessary for salvation`,`Exercise civil jurisdiction as part of the episcopal office`,`Preach the Gospel, forgive and retain sins, and administer the sacraments`], `E`, `AC XXVIII`),
+
+/* ---------- Apology ---------- */
+Q(`Apology of the AC`, `The Apology was written in answer to which document?`,
+  [`Exsurge Domine`,`The Edict of Worms`,`The Roman Confutation`,`The Council of Trent`,`Zwingli's Fidei ratio`], `C`, `Ap, Preface and Introduction`, `The Roman (Pontifical) Confutation of 1530.`),
+Q(`Apology of the AC`, `In Apology IV, Melanchthon explains that "to be justified" primarily means:`,
+  [`To be made righteous by infused grace`,`To be pronounced or accounted righteous`,`To be perfected in love`,`To be released from temporal punishment`,`To be received into a religious order`], `B`, `Ap IV`, `Forensic emphasis, though Melanchthon also notes the sense of regeneration.`),
+Q(`Apology of the AC`, `According to Apology IV, Scripture contains two chief works or doctrines:`,
+  [`Creation and redemption`,`Prophets and apostles`,`Old Testament and New Testament`,`Law and promises`,`Letter and spirit`], `D`, `Ap IV`, `Law and promises, the basis for the Law/Gospel distinction.`),
+Q(`Apology of the AC`, `According to Apology VII-VIII, the church is chiefly:`,
+  [`An association of faith and the Holy Spirit in the hearts of persons, with Word and sacraments as outward marks`,`An outward polity like any other commonwealth`,`The clergy alone`,`An invisible company with no outward marks`,`A community of the sinless`], `A`, `Ap VII-VIII`, `Tappert combines these under "The Church."`),
+Q(`Apology of the AC`, `According to Apology XII, true repentance consists of two parts:`,
+  [`Contrition, confession, and satisfaction`,`Confession and absolution`,`Contrition and good works`,`Baptism and the Lord's Supper`,`Contrition and faith`], `E`, `Ap XII`, `Contrition and faith.`),
+Q(`Apology of the AC`, `In Apology XXIV, the only propitiatory sacrifice is:`,
+  [`The Mass offered by the priest for the living and the dead`,`Good works`,`The death of Christ`,`Monastic vows`,`The prayers of the saints`], `C`, `Ap XXIV`, `The Mass is a eucharistic sacrifice of thanksgiving, not a propitiation.`),
+Q(`Apology of the AC`, `Besides Baptism and the Lord's Supper, which of the following does Apology XIII say may rightly be called a sacrament, since it has God's command and the promise of grace?`,
+  [`Confirmation`,`Extreme unction`,`Marriage`,`Absolution (penitence)`,`Monastic vows`], `D`, `Ap XIII`, `Ordination is also allowed if understood as the ministry of the Word.`),
+
+/* ---------- Smalcald Articles ---------- */
+Q(`Smalcald Articles`, `Luther prepared the Smalcald Articles in anticipation of a general council called by Pope Paul III to meet at:`,
+  [`Trent`,`Mantua`,`Regensburg`,`Worms`,`Speyer`], `B`, `SA, Preface`),
+Q(`Smalcald Articles`, `According to SA Part II, Article I, the "first and chief article" is that:`,
+  [`Scripture alone is the norm of doctrine`,`Jesus Christ, our God and Lord, died for our sins and was raised for our justification`,`Christ's body and blood are truly present in the Supper`,`God is one in three persons`,`The church is the assembly of saints`], `B`, `SA II i`),
+Q(`Smalcald Articles`, `In Part II of the Smalcald Articles, Luther calls what the "dragon's tail"?`,
+  [`Papal primacy`,`Monastic vows`,`Purgatory`,`The Mass`,`Indulgences`], `D`, `SA II ii`),
+Q(`Smalcald Articles`, `Part I of the Smalcald Articles deals with:`,
+  [`Christ's office and our redemption`,`Matters that may be discussed with learned and sensible men`,`The Mass and papal power`,`Good works and sanctification`,`The high articles of the divine majesty, on which there is no dispute`], `E`, `SA I`, `The Trinity and Christology, with no dispute with Rome.`),
+Q(`Smalcald Articles`, `Which of the following is NOT among the ways in which, according to SA III, iv, the Gospel gives counsel and help against sin?`,
+  [`Baptism`,`The Sacrament of the Altar`,`The power of the keys`,`The mutual conversation and consolation of the brethren`,`Indulgences`], `E`, `SA III iv`, `Spoken Word, Baptism, Lord's Supper, Keys, and brotherly consolation are listed.`),
+Q(`Smalcald Articles`, `In SA III, viii, Luther insists that God gives the Spirit or grace only through or with:`,
+  [`The believer's inner experience`,`Conscience`,`Direct visions`,`The preceding external Word`,`The decrees of councils`], `D`, `SA III viii`, `The external Word precedes the Spirit, against the "enthusiasts."`),
+
+/* ---------- Treatise ---------- */
+Q(`Treatise on the Power and Primacy of the Pope`, `Which church father does the Treatise cite to show that bishops and pastors are of equal rank by divine right?`,
+  [`Augustine`,`Ambrose`,`Jerome`,`Chrysostom`,`Cyprian`], `C`, `Treatise, on the equality of bishops and pastors`),
+Q(`Treatise on the Power and Primacy of the Pope`, `According to the Treatise, the keys and the right to call ministers belong ultimately to:`,
+  [`The pope alone`,`The emperor`,`A council of bishops`,`The universities`,`The church`], `E`, `Treatise`),
+
+/* ---------- Small Catechism ---------- */
+Q(`Small Catechism`, `Luther wrote the Small Catechism in 1529 largely as a result of his experience in:`,
+  [`The Saxon Visitation`,`The Leipzig Debate`,`The Diet of Speyer`,`The Marburg Colloquy`,`The Peasants' War`], `A`, `SC, Preface`, `The Saxon Visitation of 1528-29.`),
+Q(`Small Catechism`, `According to the Small Catechism, Baptism is:`,
+  [`A sign of membership only`,`Water included in God's command and combined with God's Word`,`A work offered by the sinner for merit`,`A ceremony of public confession`,`An optional sign of obedience`], `B`, `SC IV`),
+Q(`Small Catechism`, `Which statement begins Luther's explanation of the Third Article of the Creed?`,
+  [`"I believe that God has made me and all creatures."`,`"I believe that Jesus Christ... is my Lord."`,`"I believe that I cannot by my own reason or strength believe in Jesus Christ, my Lord, or come to Him."`,`"I believe that the Church is the communion of saints."`,`"I believe that my sins are forgiven by my own contrition."`], `C`, `SC II, Third Article`),
+Q(`Small Catechism`, `According to the Small Catechism, who is truly worthy and well prepared to receive the Sacrament?`,
+  [`The one who has fasted`,`The one who has privately confessed`,`The one who has prayed`,`The one who has faith in the words "given and shed for you for the forgiveness of sins"`,`The one who has long been a communicant`], `D`, `SC VI`, `Faith in the words is "worthy and well prepared."`),
+Q(`Small Catechism`, `In Luther's explanation of the Third Commandment, we are to:`,
+  [`Cease from all work on the seventh day`,`Observe the ceremonial feasts of the Old Testament`,`Give a tenth of our income`,`Make pilgrimages to holy places`,`Not despise preaching and God's Word, but hold it sacred and gladly hear and learn it`], `E`, `SC I, Third Commandment`),
+Q(`Small Catechism`, `In the introduction to the Lord's Prayer, Luther says that God would tenderly invite us to believe that:`,
+  [`He is a stern judge whom we must placate`,`He is our true Father and we are His true children`,`He will grant whatever we ask`,`Our prayers merit forgiveness`,`We must first be reconciled to our neighbors`], `B`, `SC III, Introduction`),
+
+/* ---------- Large Catechism ---------- */
+Q(`Large Catechism`, `In the Preface to the Large Catechism, Luther says that although he is a doctor and preacher, he still reads and studies daily the:`,
+  [`Hebrew Psalter`,`Lectionary`,`Catechism`,`Church fathers`,`Sentences of Peter Lombard`], `C`, `LC, Short Preface`),
+Q(`Large Catechism`, `According to LC I, to "have a god" means to:`,
+  [`Recite the Creed faithfully`,`Trust and rely on something with the whole heart`,`Hold correct doctrine about the deity`,`Attend worship regularly`,`Obey the civil authorities`], `B`, `LC I, First Commandment`),
+Q(`Large Catechism`, `According to LC II, the Creed teaches us to know:`,
+  [`The Father as revealer, the Son as sanctifier, the Spirit as creator`,`The Father as one who elects, the Son as one who redeems, the Spirit as one who judges`,`The Father as creator, the Spirit as redeemer, the Son as sanctifier`,`The Father as creator, the Son as redeemer, the Spirit as sanctifier`,`The Father as judge, the Son as mediator, the Spirit as lawgiver`], `D`, `LC II`, `Creation, redemption, and sanctification.`),
+Q(`Large Catechism`, `To the objection "How can water do such great things?" Luther answers that:`,
+  [`Water has a mystical natural power`,`The water of the Jordan was sanctified once for all`,`The priest's blessing gives it power`,`Faith alone does the work, apart from the water`,`It is God's Word in and with the water, received in faith`], `E`, `LC IV`),
+Q(`Large Catechism`, `According to the Brief Exhortation to Confession in the Large Catechism, confession consists of two parts:`,
+  [`Our confessing of sin, and our receiving absolution as God's own word`,`Contrition and satisfaction`,`Enumeration of sins and penance`,`Baptism and communion`,`Prayer and fasting`], `A`, `LC, Brief Exhortation to Confession`),
+Q(`Large Catechism`, `In LC V, Luther says the Sacrament of the Altar is given especially for:`,
+  [`The perfectly pure`,`Those who feel their sin and desire strength`,`The clergy only`,`Those who have fasted`,`The dying only`], `B`, `LC V`, `Luther calls it medicine and food for the weak.`),
+
+/* ---------- Formula of Concord ---------- */
+Q(`Formula of Concord`, `The Book of Concord was published in what year?`,
+  [`1537`,`1555`,`1580`,`1577`,`1600`], `C`, `Book of Concord`, `The Solid Declaration was completed in 1577; the Book of Concord appeared in 1580.`),
+Q(`Formula of Concord`, `Which of the following was NOT among the framers of the Formula of Concord?`,
+  [`Jakob Andreae`,`Martin Chemnitz`,`David Chytraeus`,`Nikolaus Selnecker`,`Philip Melanchthon`], `E`, `FC, Preface`, `Melanchthon died in 1560.`),
+Q(`Formula of Concord`, `According to the Epitome ("Rule and Norm"), the only judge, rule, and norm of doctrine are:`,
+  [`The prophetic and apostolic Scriptures`,`Luther's catechisms`,`The Augsburg Confession`,`The three ecumenical creeds`,`The writings of the church fathers`], `A`, `FC Ep, Rule and Norm`, `The confessions are witnesses, not judges.`),
+Q(`Formula of Concord`, `FC I rejects the claim of Flacius that original sin:`,
+  [`Is merely an imitation of Adam's example`,`Is the very substance or essence of fallen human nature`,`Is wholly removed in Baptism`,`Is imputed only to the elect`,`Leaves the will unaffected`], `B`, `FC I`),
+Q(`Formula of Concord`, `Which of the following does FC II reject as contrary to Scripture?`,
+  [`Fallen man cannot by his own powers turn to God`,`The Holy Spirit works faith through the Word`,`The unregenerate will can by its natural powers prepare itself for, or cooperate in, conversion`,`Conversion is God's work alone`,`The unregenerate will is bound to sin`], `C`, `FC II`, `The synergistic error.`),
+Q(`Formula of Concord`, `FC III rejects the teaching that the essential, indwelling righteousness of Christ's divine nature is our righteousness before God. Who taught this?`,
+  [`Matthias Flacius`,`Georg Major`,`Johann Agricola`,`Andreas Osiander`,`Andreas Karlstadt`], `D`, `FC III`),
+Q(`Formula of Concord`, `FC IV (Good Works) rejects the proposition "Good works are necessary for salvation," which was associated with:`,
+  [`Nicholas von Amsdorf`,`Georg Major`,`Matthias Flacius`,`Andreas Osiander`,`Johann Agricola`], `B`, `FC IV`, `The Majoristic controversy.`),
+Q(`Formula of Concord`, `The "third use" of the Law, as taught in FC VI, is:`,
+  [`To restrain the wicked by threat of punishment`,`To act as a mirror that shows sin`,`To justify those who obey it`,`To regulate the ceremonial life of Israel`,`To teach the regenerate which good works God desires, as a guide for the new life`], `E`, `FC VI`, `Against the Antinomians.`),
+
+
+/* ================= READY-MADE TESTS ================= */
+/* ======================= ECUMENICAL CREEDS ======================= */
+T(`Apostles' Creed`, `Ecumenical Creeds`),
+M(`The Apostles' Creed grew out of an early baptismal confession of faith used in which church?`,
+  [`Rome`,`Alexandria`,`Antioch`,`Constantinople`,`Carthage`], `Apostles' Creed`, `It developed from the Old Roman Symbol; the legend of the twelve apostles' authorship is later.`),
+M(`In the Apostles' Creed, which phrase immediately follows "dead and buried"?`,
+  [`He descended into hell`,`He ascended into heaven`,`The third day He rose again`,`He sitteth on the right hand of God`,`He shall come to judge`], `Apostles' Creed, Second Article`),
+M(`The Apostles' Creed says Christ "suffered under" which Roman official?`,
+  [`Pontius Pilate`,`Herod Antipas`,`Caiaphas`,`Tiberius`,`Felix`], `Apostles' Creed, Second Article`),
+M(`Which confession is found in the Apostles' Creed but NOT in the Nicene Creed?`,
+  [`He descended into hell`,`Begotten of His Father before all worlds`,`By whom all things were made`,`I acknowledge one baptism`,`Of one substance with the Father`], `Apostles' and Nicene Creeds compared`),
+M(`In the Third Article of the Apostles' Creed, what is confessed immediately before "the resurrection of the body"?`,
+  [`The forgiveness of sins`,`The communion of saints`,`The holy Christian Church`,`The life everlasting`,`The Holy Ghost`], `Apostles' Creed, Third Article`),
+M(`In the phrase "the quick and the dead," the word "quick" means:`,
+  [`Living`,`Swift`,`Righteous`,`Baptized`,`Sleeping`], `Apostles' Creed, Second Article`),
+M(`The Apostles' Creed describes God the Father as:`,
+  [`Almighty, Maker of heaven and earth`,`Begotten before all worlds`,`Light of Light`,`Lord and Giver of Life`,`Of one substance with the Son`], `Apostles' Creed, First Article`),
+
+T(`Nicene Creed`, `Ecumenical Creeds`),
+M(`Which emperor convened the Council of Nicaea in 325?`,
+  [`Constantine`,`Diocletian`,`Julian`,`Theodosius I`,`Justinian`], `Nicene Creed (historical)`),
+M(`Which heresy was the Council of Nicaea chiefly called to address?`,
+  [`Arianism`,`Pelagianism`,`Nestorianism`,`Donatism`,`Gnosticism`], `Nicene Creed (historical)`),
+M(`The creed called "Nicene" in the Book of Concord reached its present form at which later council?`,
+  [`Constantinople (381)`,`Ephesus (431)`,`Chalcedon (451)`,`Nicaea II (787)`,`Toledo (589)`], `Nicene Creed (historical)`, `Properly the Niceno-Constantinopolitan Creed.`),
+M(`The Western addition "and the Son" (Filioque) concerns the:`,
+  [`Procession of the Holy Spirit`,`Incarnation of Christ`,`Eternal generation of the Son`,`Authority of the pope`,`Number of the sacraments`], `Nicene Creed, Third Article`, `It later became a point of division between East and West.`),
+M(`Which phrase most directly rejects the Arian claim that the Son is a creature?`,
+  [`Begotten, not made, being of one substance with the Father`,`Maker of heaven and earth`,`Born of the Virgin Mary`,`He suffered under Pontius Pilate`,`He ascended into heaven`], `Nicene Creed, Second Article`),
+M(`According to the Nicene Creed, the Holy Spirit is:`,
+  [`The Lord and Giver of Life`,`The Maker of all things visible`,`Begotten of the Father`,`A creature of the Son`,`The mediator between God and man`], `Nicene Creed, Third Article`),
+M(`Which of these phrases is found in the Nicene Creed?`,
+  [`Light of Light, very God of very God`,`Conceived by the Holy Ghost`,`He descended into hell`,`Neither confounding the Persons`,`The communion of saints`], `Nicene Creed, Second Article`),
+M(`The Nicene Creed ends by saying that the believer looks for:`,
+  [`The resurrection of the dead and the life of the world to come`,`The restoration of all things`,`The conversion of the nations`,`The return of the saints`,`The reign of a thousand years`], `Nicene Creed, conclusion`),
+M(`Which deacon, later bishop of Alexandria, was the chief defender of Nicene orthodoxy against Arius?`,
+  [`Athanasius`,`Basil the Great`,`Ambrose`,`Gregory of Nyssa`,`Cyril`], `Nicene Creed (historical)`),
+M(`The Nicene Creed confesses "one baptism" for what purpose?`,
+  [`The remission of sins`,`Admission to the priesthood`,`The merit of good works`,`Union with the bishops`,`The gift of tongues`], `Nicene Creed, Third Article`),
+
+T(`Athanasian Creed`, `Ecumenical Creeds`),
+M(`Scholars generally regard the Athanasian Creed as:`,
+  [`A Western Latin composition of about the fifth or sixth century`,`Written by Athanasius at Nicaea`,`A decree of Chalcedon`,`An eighth-century Frankish forgery`,`A Greek hymn of the fourth century`], `Athanasian Creed (historical)`, `Athanasius did not write it; the name reflects its defense of the faith he championed.`),
+M(`The Athanasian Creed has two main subjects. They are:`,
+  [`The Trinity and the Incarnation`,`Creation and redemption`,`Law and Gospel`,`Baptism and the Supper`,`The church and the ministry`], `Athanasian Creed`),
+M(`"We worship one God in Trinity, and Trinity in Unity; neither confounding the Persons nor ____ the substance."`,
+  [`Dividing`,`Denying`,`Mixing`,`Dissolving`,`Subordinating`], `Athanasian Creed`),
+M(`How many "almighties" does the Athanasian Creed say there are?`,
+  [`One almighty`,`Three almighties`,`Two`,`One almighty Father and two lesser powers`,`The word is not used`], `Athanasian Creed`, `"Not three almighties, but one almighty."`),
+M(`The Athanasian Creed says the Holy Ghost is "of the Father and of the Son," and is:`,
+  [`Neither made, nor created, nor begotten, but proceeding`,`Made, but not created`,`Created, but not begotten`,`Begotten, but not made`,`Begotten before all worlds`], `Athanasian Creed`),
+M(`The Athanasian Creed says Christ is God of the substance of the Father, begotten before the worlds, and man of:`,
+  [`The substance of His mother, born in the world`,`A heavenly flesh brought from above`,`A body only apparent`,`The substance of Joseph`,`A nature changed from the divine`], `Athanasian Creed`),
+M(`According to the creed, Christ's two natures are united "not by conversion of the Godhead into flesh, but by":`,
+  [`Taking of the manhood into God`,`Mixing the two natures`,`The Spirit's descent`,`The merit of His obedience`,`The adoption of a man`], `Athanasian Creed`),
+M(`According to the Athanasian Creed, at Christ's coming all men shall:`,
+  [`Rise again with their bodies and give account of their own works`,`Be gathered into one kingdom without judgment`,`Receive the same reward`,`Be tested by purgatorial fire`,`Pass into non-existence`], `Athanasian Creed`),
+M(`How does the Athanasian Creed close?`,
+  [`With the statement that this is the catholic faith, which a man must believe faithfully and firmly to be saved`,`With a Gloria Patri`,`With a prayer for the emperor`,`With an anathema against Arius by name`,`With the Lord's Prayer`], `Athanasian Creed, conclusion`),
+M(`The Athanasian Creed says the Father, the Son, and the Holy Ghost are each:`,
+  [`Uncreated, eternal, and almighty`,`Created before time`,`Unequal in glory`,`Subordinate in power`,`Made by the Father's will`], `Athanasian Creed`),
+
+/* ======================= AUGSBURG CONFESSION: THREE FULL TESTS ======================= */
+T(`Augsburg Confession, Test 1 (Preface and Articles I-XIII)`, `Augsburg Confession`),
+M(`According to its Preface, Emperor Charles V summoned the Diet of Augsburg to consider help against the Turks and also to:`,
+  [`Seek a settlement of the religious dispute`,`Elect a new pope`,`Plan a crusade to recover Jerusalem`,`Reaffirm the Edict of Worms without discussion`,`Divide the empire among his brothers`], `AC, Preface`),
+M(`Who read the German text of the Augsburg Confession aloud to the Diet on June 25, 1530?`,
+  [`Chancellor Christian Beyer`,`Philip Melanchthon`,`Johann Eck`,`Justus Jonas`,`Georg Spalatin`], `AC, Preface (historical)`),
+M(`Which prince is named first among the evangelical signers in the Preface?`,
+  [`John, Elector of Saxony`,`Philip, Landgrave of Hesse`,`Frederick the Wise`,`George, Margrave of Brandenburg`,`Wolfgang, Prince of Anhalt`], `AC, Preface`),
+M(`Which two imperial cities are named among the signers of the Preface?`,
+  [`Nuremberg and Reutlingen`,`Augsburg and Ulm`,`Strasbourg and Constance`,`Hamburg and Lubeck`,`Frankfurt and Cologne`], `AC, Preface`),
+M(`During the Diet, Luther remained at ____ because he was still under the imperial ban.`,
+  [`Coburg`,`The Wartburg`,`Wittenberg`,`Torgau`,`Marburg`], `AC, Preface (historical)`),
+M(`Which 1529 set of articles, largely Luther's work, served as a source for the doctrinal articles of the Augsburg Confession?`,
+  [`The Schwabach Articles`,`The Smalcald Articles`,`The Formula of Concord`,`The Wittenberg Concord`,`The Tetrapolitan Confession`], `AC (historical)`),
+M(`Which 1530 document, prepared by Luther, Jonas, Bugenhagen, and Melanchthon, supplied much of the material for the articles on abuses?`,
+  [`The Torgau Articles`,`The Marburg Articles`,`The Schwabach Articles`,`The Leipzig Interim`,`The Treatise`], `AC (historical)`),
+M(`Which Roman Catholic theologian was chief among the authors of the Confutation of the Augsburg Confession?`,
+  [`Johann Eck`,`Cardinal Cajetan`,`Cardinal Contarini`,`Girolamo Aleander`,`Johann Tetzel`], `AC (historical)`),
+M(`In AC I, the word "person" is used in the sense of the Fathers, to signify not a part or quality in another, but:`,
+  [`That which subsists of itself`,`A mask worn in worship`,`A mode of divine activity`,`One function of God`,`A merely legal individual`], `AC I`),
+M(`Which group does AC I condemn for teaching that there are two principles, one good and one evil?`,
+  [`The Manichaeans`,`The Valentinians`,`The Arians`,`The Eunomians`,`The Samosatenes`], `AC I`),
+M(`AC I describes the one divine essence as eternal, without body, without parts, and of infinite:`,
+  [`Power, wisdom, and goodness`,`Justice, mercy, and truth`,`Light, life, and love`,`Majesty, glory, and honor`,`Knowledge, will, and action`], `AC I`),
+M(`AC II traces the universal condition of being born in sin to the fall of:`,
+  [`Adam`,`Eve`,`Cain`,`Noah`,`Abraham`], `AC II`),
+M(`AC II says that all men begotten in the natural way are born without fear of God, without trust in God, and with:`,
+  [`Concupiscence`,`Ignorance`,`Free will`,`Merit`,`Divine light`], `AC II`),
+M(`AC II says that Pelagians and others deny original sin in order to obscure the glory of:`,
+  [`Christ's merits and benefits`,`The bishops' authority`,`The saints' intercession`,`The Mass`,`The law of Moses`], `AC II`),
+M(`AC III says that the two natures of Christ are "inseparably conjoined" in:`,
+  [`The unity of His person`,`A mixture of substance`,`The will of the Father`,`The office of Mediator only`,`The body alone`], `AC III`),
+M(`According to AC III, Christ truly suffered, was crucified, dead, and buried in order to reconcile the Father to us and be a sacrifice for:`,
+  [`Original guilt and all actual sins of men`,`The sins of the elect only`,`Sins before Baptism only`,`Ceremonial uncleanness`,`Mortal sins only`], `AC III`),
+M(`AC III says Christ sits at the right hand of the Father to reign forever and to sanctify believers by sending into their hearts:`,
+  [`The Holy Spirit`,`The saints`,`Angels`,`The bishops`,`The sacraments alone`], `AC III`),
+M(`According to AC III, the Holy Spirit is sent to rule, comfort, and quicken believers and to defend them against:`,
+  [`The devil and the power of sin`,`The pope and the emperor`,`False teachers only`,`The Turks`,`Purgatory`], `AC III`),
+M(`AC IV says that the faith by which we are justified is imputed by God:`,
+  [`For righteousness in His sight`,`As a work of merit`,`As a reward for love`,`As a debt owed`,`As an infused habit`], `AC IV`),
+M(`Which chapters of Romans does AC IV cite for justification by faith?`,
+  [`Romans 3 and 4`,`Romans 5 and 6`,`Romans 7 and 8`,`Romans 9 and 10`,`Romans 12 and 13`], `AC IV`),
+M(`In AC IV, Christ makes satisfaction for our sins by:`,
+  [`His death`,`His teaching`,`His miracles`,`His example`,`The Mass`], `AC IV`),
+M(`In AC IV, the word "freely" in "freely justified for Christ's sake" excludes:`,
+  [`Any human merit or work as a ground of justification`,`The need for faith`,`The role of Christ`,`The use of the sacraments`,`The preaching of the Law`], `AC IV`),
+M(`According to AC V, God instituted the office of the ministry in order to bring about:`,
+  [`Such faith`,`Ecclesiastical wealth`,`Civil order`,`Uniform ceremonies`,`Apostolic succession`], `AC V`),
+M(`AC V says the Holy Spirit works faith, where and when God pleases, in those who:`,
+  [`Hear the Gospel`,`Perform penance`,`Fast and pray`,`Join a monastic order`,`Have been confirmed by a bishop`], `AC V`),
+M(`AC V condemns those who say the Holy Spirit comes to men without the external Word, through their own:`,
+  [`Preparations and works`,`Baptism and confirmation`,`Fear and trembling`,`Wealth and status`,`Study and learning`], `AC V`),
+M(`The phrase "where and when it pleases God" in AC V stresses that faith is:`,
+  [`God's work, not the product of the hearer's effort`,`Earned by diligent hearing`,`Dependent on the preacher's skill`,`Given only to the elect clergy`,`A reward for obedience`], `AC V`),
+M(`AC VI says faith should bring forth good fruits, but that we should not rely on those works to:`,
+  [`Merit justification before God`,`Serve our neighbor`,`Honor the civil magistrate`,`Show our gratitude`,`Obey the Ten Commandments`], `AC VI`),
+M(`In AC VI, Christ's saying "We are unprofitable servants" comes from which Gospel passage?`,
+  [`Luke 17:10`,`Matthew 25:21`,`Luke 18:13`,`John 15:5`,`Matthew 7:21`], `AC VI`),
+M(`AC VI quotes Ambrose as saying that he who believes in Christ is saved, freely receiving remission of sins, without works, by:`,
+  [`Faith alone`,`Penance`,`Baptism alone`,`The Mass`,`Almsgiving`], `AC VI`),
+M(`AC VI is titled:`,
+  [`The New Obedience`,`Good Works`,`The Righteousness of Faith`,`Of Repentance`,`Of Order in the Church`], `AC VI`),
+M(`AC VII defines the church as the congregation of saints in which:`,
+  [`The Gospel is rightly taught and the sacraments rightly administered`,`The bishops hold unbroken succession`,`All ceremonies are uniform`,`Only the sinless are members`,`The pope presides`], `AC VII`),
+M(`AC VII quotes which text to show that the unity of the church is "one faith, one Baptism, one God and Father of all"?`,
+  [`Ephesians 4:5-6`,`Galatians 3:28`,`1 Corinthians 12:13`,`Romans 12:5`,`Colossians 3:11`], `AC VII`),
+M(`According to AC VII, it is NOT necessary that:`,
+  [`Human traditions, rites, and ceremonies be everywhere alike`,`The Gospel be taught purely`,`The sacraments be rightly administered`,`The church be holy`,`The church continue forever`], `AC VII`),
+M(`AC VII says that one holy church is to continue:`,
+  [`Forever`,`Until the next council`,`Until the fall of Rome`,`Only in Germany`,`Until the Turks are defeated`], `AC VII`),
+M(`AC VIII says that, properly speaking, the church is nothing else than:`,
+  [`The assembly of all believers and saints`,`The clergy and religious orders`,`The Holy Roman Empire`,`The company of bishops`,`The visible hierarchy under the pope`], `AC VIII`),
+M(`To show that the sacraments are valid when administered by evil men, AC VIII cites Christ's saying that the scribes and Pharisees:`,
+  [`Sit in Moses' seat`,`Are whitened sepulchers`,`Are blind guides`,`Strain out a gnat`,`Devour widows' houses`], `AC VIII`),
+M(`According to AC VIII, the sacraments and the Word are effectual even when administered by evil men because of:`,
+  [`The institution and commandment of Christ`,`The minister's holiness`,`The bishop's ordination`,`The faith of the congregation alone`,`The merit of the saints`], `AC VIII`),
+M(`According to AC IX, children are received into God's grace through Baptism, being:`,
+  [`Offered to God`,`Confirmed by the bishop`,`Taught the catechism`,`Examined by the priest`,`Anointed by the church`], `AC IX`),
+M(`AC IX condemns the Anabaptists for teaching that:`,
+  [`Children are saved without Baptism`,`Baptism is necessary to salvation`,`Grace is offered through Baptism`,`Children belong to the church`,`Baptism should use water`], `AC IX`),
+M(`According to AC X, the body and blood of Christ are present and distributed in the Supper under the form of:`,
+  [`Bread and wine`,`Signs only`,`A change that leaves no bread`,`Memory alone`,`Faith alone`], `AC X`),
+M(`Which article of the Augsburg Confession was most notably altered in the 1540 Variata?`,
+  [`Article X`,`Article IV`,`Article VII`,`Article XXIV`,`Article XXVIII`], `AC X (historical)`),
+M(`AC X says that those who teach contrary to the real presence are:`,
+  [`Rejected`,`Tolerated`,`Required to recant before the bishop`,`Excommunicated by the civil magistrate`,`Left to the judgment of a council`], `AC X`),
+M(`AC XI says that private absolution ought to be:`,
+  [`Retained in the churches`,`Abolished`,`Limited to monks`,`Reserved to the bishop`,`Required weekly`], `AC XI`),
+M(`AC XI says enumeration of all sins is not necessary because it is impossible, citing Psalm 19:12:`,
+  [`"Who can discern his errors?"`,`"My sin is ever before me"`,`"Create in me a clean heart"`,`"Out of the depths I cry"`,`"Against You, You only, have I sinned"`], `AC XI`),
+M(`According to AC XII, true repentance consists of contrition and sorrow, together with faith in:`,
+  [`The Gospel and absolution`,`The saints' intercession`,`The Church's satisfactions`,`The bishop's authority`,`The sacrament of the Mass`], `AC XII`),
+M(`AC XII says amendment of life should follow, as John says: "Bear fruit that befits ____."`,
+  [`Repentance`,`The Gospel`,`The kingdom`,`The Spirit`,`Your calling`], `AC XII (Matt. 3:8)`),
+M(`AC XII condemns those who contend that some may attain such perfection in this life that they:`,
+  [`Cannot sin`,`Need no absolution`,`May ignore the Law`,`Do not need the sacraments`,`May become bishops`], `AC XII`),
+M(`AC XII condemns Anabaptists who deny that those once justified can:`,
+  [`Lose the Holy Spirit`,`Be baptized again`,`Receive the Supper`,`Hold civil office`,`Marry`], `AC XII`),
+M(`According to AC XIII, men must use the sacraments so as to join with them:`,
+  [`Faith`,`Fasting`,`Almsgiving`,`Pilgrimage`,`Confession of every sin`], `AC XIII`),
+M(`AC XIII condemns those who teach that the sacraments justify by:`,
+  [`The outward act (ex opere operato)`,`Faith in the promise`,`The Word of institution`,`The minister's call`,`The use of water`], `AC XIII`),
+
+T(`Augsburg Confession, Test 2 (Articles XIV-XXI)`, `Augsburg Confession`),
+N(`How many articles make up Part I of the Augsburg Confession, "Chief Articles of Faith"?`,
+  [`Seven`,`Twelve`,`Twenty-one`,`Twenty-eight`,`Thirty-nine`], `C`, `AC, Part I`),
+M(`Who was chiefly responsible for the 1540 altered edition (Variata) of the Augsburg Confession?`,
+  [`Philip Melanchthon`,`Martin Luther`,`John Calvin`,`Johann Eck`,`Martin Chemnitz`], `AC (historical)`),
+M(`Which article of the Augsburg Confession condemns the Donatists by name?`,
+  [`Article VIII`,`Article IX`,`Article XI`,`Article XIV`,`Article XVIII`], `AC VIII`),
+M(`Which article condemns the Novatians for refusing to absolve those who fell after Baptism?`,
+  [`Article XII`,`Article IX`,`Article XIII`,`Article XVI`,`Article XIX`], `AC XII`),
+M(`Which article quotes Augustine's Hypognosticon?`,
+  [`Article XVIII`,`Article IV`,`Article VI`,`Article XX`,`Article XXI`], `AC XVIII`),
+M(`In which article does the Latin phrase rite vocatus occur?`,
+  [`Article XIV`,`Article V`,`Article VII`,`Article XV`,`Article XXVIII`], `AC XIV`),
+M(`Which article addresses the cause of sin?`,
+  [`Article XIX`,`Article II`,`Article XVII`,`Article XVIII`,`Article XX`], `AC XIX`),
+M(`In which two articles are the Pelagians condemned?`,
+  [`II and XVIII`,`II and IV`,`IV and XX`,`XVIII and XIX`,`XII and XVIII`], `AC II, XVIII`),
+M(`Which article of Part I treats the cult of the saints?`,
+  [`Article XXI`,`Article XX`,`Article XIX`,`Article XVII`,`Article XIV`], `AC XXI`),
+M(`Which article deals with civil government and civil affairs?`,
+  [`Article XVI`,`Article XV`,`Article XVII`,`Article XXVIII`,`Article XIV`], `AC XVI`),
+M(`AC XIV says that no one should publicly teach in the church or administer the sacraments unless he is:`,
+  [`Regularly called`,`Elected by lot`,`A monk`,`Licensed by the emperor`,`Confirmed by the pope`], `AC XIV`),
+M(`The Latin phrase rite vocatus in AC XIV means:`,
+  [`Properly called`,`Rightly baptized`,`Priestly ordained only by a bishop`,`Appointed by the civil ruler`,`Chosen by acclamation`], `AC XIV`),
+M(`AC XV says that church usages should be observed if they can be observed without sin and if they contribute to:`,
+  [`Peace and good order in the church`,`The merit of the faithful`,`The authority of bishops`,`The treasury of the church`,`The uniformity of the empire`], `AC XV`),
+M(`AC XV says consciences are not to be burdened as though such observance were:`,
+  [`Necessary to salvation`,`Pleasing to the saints`,`Part of civil law`,`Useful for order`,`Customary in Germany`], `AC XV`),
+M(`AC XV says that human traditions instituted to propitiate God, merit grace, and make satisfaction for sins are:`,
+  [`Opposed to the Gospel and the doctrine of faith`,`Useful discipline`,`Required by canon law`,`Neutral in effect`,`Taught by the apostles`], `AC XV`),
+M(`Which of the following does AC XVI NOT list among things Christians may do without sin?`,
+  [`Depose an unjust ruler by force`,`Hold civil office`,`Engage in just wars`,`Take oaths when required by magistrates`,`Hold property`], `AC XVI`),
+M(`AC XVI condemns those who place evangelical perfection in:`,
+  [`Forsaking civil offices`,`Fear of God and faith`,`Serving in one's calling`,`Obeying magistrates`,`Charity toward neighbors`], `AC XVI`),
+M(`AC XVI says the Gospel teaches an eternal righteousness of:`,
+  [`The heart`,`The hand`,`The state`,`The law`,`The sacraments`], `AC XVI`),
+M(`According to AC XVI, the Gospel does not destroy the state or the family but requires that they be preserved as:`,
+  [`God's ordinances`,`Human conventions`,`Necessary evils`,`Remnants of the Law`,`Instruments of the church`], `AC XVI`),
+M(`According to AC XVI, Christians are bound to obey their magistrates and laws except when:`,
+  [`Commanded to sin`,`The magistrate is not baptized`,`The law is inconvenient`,`The bishop forbids obedience`,`The ruler is a foreigner`], `AC XVI`),
+M(`AC XVII says that at the consummation of the world Christ will appear for judgment and will raise up:`,
+  [`All the dead`,`The elect only`,`The clergy only`,`The martyrs only`,`Those baptized as adults`], `AC XVII`),
+M(`AC XVII condemns the "Jewish opinions" that, before the resurrection of the dead:`,
+  [`The godly will take possession of the kingdom of the world, and the ungodly be suppressed`,`The saints will intercede for the living`,`The soul sleeps until the last day`,`Purgatory will be emptied`,`Christ will reign in Rome`], `AC XVII`),
+M(`According to AC XVII, ungodly men and the devils will be condemned to be tormented:`,
+  [`Without end`,`For a time, then restored`,`Until the resurrection`,`Only in conscience`,`According to their merits, then annihilated`], `AC XVII`),
+M(`AC XVIII says that the human will has some liberty to choose:`,
+  [`Civil righteousness and things subject to reason`,`Spiritual righteousness`,`Faith in Christ`,`The righteousness of God`,`Eternal life`], `AC XVIII`),
+M(`Which text does AC XVIII cite: "The natural man does not receive the gifts of the Spirit of God"?`,
+  [`1 Corinthians 2:14`,`Romans 8:7`,`Ephesians 2:1`,`Romans 3:10`,`John 3:3`], `AC XVIII`),
+M(`In the Augustine quotation in AC XVIII, which of the following is named as a "good" work of free will in this life?`,
+  [`Building a house`,`Believing in Christ`,`Loving God above all things`,`Keeping the First Table of the Law`,`Praying for salvation`], `AC XVIII`),
+M(`AC XVIII condemns Pelagians who teach that without the Holy Spirit we can love God above all things and do God's commandments as touching:`,
+  [`The substance of the act`,`The reward of the act`,`The motive of the act`,`The time of the act`,`The place of the act`], `AC XVIII`),
+M(`In AC XIX, which text is cited: "When he lies, he speaks according to his own nature"?`,
+  [`John 8:44`,`Genesis 3:4`,`1 John 3:8`,`Matthew 4:3`,`2 Corinthians 11:14`], `AC XIX`),
+M(`AC XIX says that God does create and preserve:`,
+  [`Nature`,`Sin`,`The will of the wicked as such`,`Only the elect`,`Only spiritual things`], `AC XIX`),
+M(`AC XX says the adversaries formerly urged only "childish and needless works," such as:`,
+  [`Pilgrimages and the use of rosaries`,`Almsgiving to the poor`,`Prayer and hearing sermons`,`Obedience to parents`,`Care for the sick`], `AC XX`),
+M(`AC XX says the adversaries now teach that we are justified by:`,
+  [`Faith and works together`,`Works alone`,`Faith alone`,`The Mass`,`Penance`], `AC XX`),
+M(`AC XX says that our works cannot reconcile God because Christ alone has been set forth as:`,
+  [`Mediator and Propitiation`,`Judge and Lawgiver`,`Example and Teacher`,`King and Prophet`,`Pattern and Priest`], `AC XX (1 Tim. 2:5)`),
+M(`In AC XX, Christ's saying "I am the Way, the Truth, and the Life" is used against those who:`,
+  [`Trust that by works they merit grace`,`Deny the Trinity`,`Reject the sacraments`,`Neglect the Scriptures`,`Despise the bishops`], `AC XX (John 14:6)`),
+M(`AC XX cites which Pauline text: "By grace you have been saved through faith"?`,
+  [`Ephesians 2:8`,`Romans 3:28`,`Galatians 2:16`,`Titus 3:5`,`2 Timothy 1:9`], `AC XX`),
+M(`In AC XX, De vocatione gentium is cited as a work of:`,
+  [`Ambrose`,`Augustine`,`Jerome`,`Cyprian`,`Gregory`], `AC XX`),
+M(`AC XX cites Romans 5:1 to show that consciences find consolation because:`,
+  [`Those justified by faith have peace with God`,`Works are rewarded`,`The Law is fulfilled by love`,`Baptism cleanses`,`The saints intercede`], `AC XX`),
+M(`According to AC XX, consciences can be set at rest only by:`,
+  [`Faith, trusting that for Christ's sake they have a gracious God`,`Works of satisfaction`,`Private masses`,`Monastic discipline`,`Counsel from a confessor`], `AC XX`),
+M(`AC XX says it is necessary to do good works, not to trust to merit grace by them, but because:`,
+  [`It is the will of God`,`The bishops require it`,`The saints did so`,`It increases merit`,`The Law demands payment`], `AC XX`),
+M(`AC XXI says the memory of the saints may be set before us in order to:`,
+  [`Follow their faith and good works according to our calling`,`Obtain their merits`,`Apply their surplus righteousness`,`Venerate their relics`,`Appeal to them as mediators`], `AC XXI`),
+M(`In AC XXI, the Emperor may follow the example of David in:`,
+  [`Making war to drive the Turks from his country`,`Building a temple`,`Composing psalms`,`Anointing priests`,`Appointing bishops`], `AC XXI`),
+M(`According to AC XXI, Scripture sets before us as Mediator, Propitiation, High Priest, and Intercessor:`,
+  [`The one Christ`,`The Virgin Mary`,`The apostles`,`The bishops`,`The martyrs`], `AC XXI`),
+M(`According to AC XXI, what worship does Christ approve above all?`,
+  [`That in all afflictions He be called upon`,`That feasts be kept in honor of saints`,`That pilgrimages be made`,`That relics be venerated`,`That images be adorned`], `AC XXI`, `Cf. 1 John 2:1; check wording in your Tappert.`),
+M(`In the Conclusion of Part I, the Lutherans say the dispute is about:`,
+  [`Certain abuses that crept into the church without rightful authority`,`The doctrine of the Trinity`,`The two natures of Christ`,`The authority of Scripture`,`The Creeds`], `AC, Conclusion of Part I`),
+M(`The Conclusion of Part I says that even the Canons do not demand:`,
+  [`The same rites everywhere`,`Obedience to bishops`,`Fasting`,`The celibacy of priests`,`The Mass`], `AC, Conclusion of Part I`),
+M(`The Conclusion of Part I calls it a false and malicious charge that:`,
+  [`All the ceremonies and things instituted of old are abolished in the Lutheran churches`,`The Lutherans reject the Trinity`,`The Lutherans deny the resurrection`,`The Lutherans refuse to baptize infants`,`The Lutherans reject the Scriptures`], `AC, Conclusion of Part I`),
+M(`The introduction to Part II says the Lutheran churches dissent from the catholic church in no article of faith, but omit some abuses that are:`,
+  [`New, adopted by the fault of the times, contrary to the Canons`,`Ancient and apostolic`,`Required by the Council of Nicaea`,`Useful for good order`,`Established by the emperor`], `AC, Part II, Introduction`),
+
+M(`According to AC XXI, the Scriptures do NOT teach us to:`,
+  [`Invoke the saints or ask help of the saints`,`Remember the saints`,`Follow the faith of the saints`,`Pray to Christ in affliction`,`Honor the saints' good works as examples`], `AC XXI`),
+M(`AC XX says that before the Reformation preachers kept "marvelous silence" about:`,
+  [`Faith`,`The Ten Commandments`,`The saints`,`Fasting`,`Pilgrimage`], `AC XX`),
+M(`AC XVIII says the righteousness of God is wrought in the heart when the Holy Spirit is received through:`,
+  [`The Word`,`Good works`,`Reason`,`Penance`,`Natural will`], `AC XVIII`),
+M(`The examples of church usages that AC XV says may be observed without sin include:`,
+  [`Particular holy days and festivals`,`Monastic vows`,`Satisfactions for sin`,`Private masses`,`The invocation of saints`], `AC XV`),
+
+T(`Augsburg Confession, Test 3 (Part II: Articles XXII-XXVIII)`, `Augsburg Confession`),
+N(`How many articles of abuses make up Part II of the Augsburg Confession?`,
+  [`Three`,`Five`,`Seven`,`Ten`,`Twelve`], `C`, `AC, Part II`),
+M(`In AC XXII, which Pauline writing is cited to show that the whole congregation used both kinds?`,
+  [`1 Corinthians`,`Romans`,`Galatians`,`Philippians`,`Hebrews`], `AC XXII`),
+M(`Which cardinal does AC XXII mention in connection with when the practice of one kind was approved?`,
+  [`Cusanus`,`Cajetan`,`Contarini`,`Wolsey`,`Campeggio`], `AC XXII`),
+M(`In AC XXII, which early church father is cited as testifying that the blood was given to the people?`,
+  [`Cyprian`,`Tertullian`,`Origen`,`Basil`,`Chrysostom`], `AC XXII`),
+M(`In AC XXII, which father is quoted as saying priests "distribute the blood of Christ to the people"?`,
+  [`Jerome`,`Augustine`,`Ambrose`,`Gregory`,`Hilary`], `AC XXII`),
+M(`In AC XXII, which pope is said to have commanded that the Sacrament not be divided?`,
+  [`Gelasius`,`Leo the Great`,`Gregory the Great`,`Innocent III`,`Boniface VIII`], `AC XXII`),
+M(`Because the division of the Sacrament does not agree with Christ's ordinance, AC XXII says the Lutherans omit:`,
+  [`The procession`,`The creed`,`The sermon`,`The collect`,`The offertory`], `AC XXII`),
+M(`In AC XXII, Christ's command regarding the cup is found in which Gospel verse?`,
+  [`Matthew 26:27`,`Luke 22:19`,`Mark 14:22`,`John 6:53`,`Matthew 28:19`], `AC XXII`),
+M(`AC XXIII reports that Pope Pius is said to have remarked that there were weightier reasons why marriage should be:`,
+  [`Given back to priests`,`Withheld from priests`,`Restricted to bishops`,`Forbidden to monks`,`Limited to the laity`], `AC XXIII`),
+M(`AC XXIII names which writer as the source for the report of Pope Pius's remark?`,
+  [`Platina`,`Eusebius`,`Bede`,`Gratian`,`Eck`], `AC XXIII`),
+M(`In AC XXIII, which text is cited: "On account of fornication, let every man have his own wife"?`,
+  [`1 Corinthians 7:2`,`1 Corinthians 7:25`,`Hebrews 13:4`,`Ephesians 5:31`,`Matthew 19:5`], `AC XXIII`),
+M(`In AC XXIII, Christ's saying "Not all men can receive this saying" is cited to show that:`,
+  [`Not all men are fit to lead a single life`,`All priests must marry`,`Celibacy is a higher state`,`Marriage is a sacrament`,`Vows are binding`], `AC XXIII`),
+M(`AC XXIII cites God's creation of man for procreation, according to which Genesis text?`,
+  [`Genesis 1:28`,`Genesis 2:18`,`Genesis 3:16`,`Genesis 9:1`,`Genesis 12:2`], `AC XXIII`),
+M(`AC XXIII argues that the priests of the ancient church were married, citing Paul's statement that a bishop should be:`,
+  [`The husband of one wife`,`Unmarried`,`A widower`,`Of noble birth`,`Chosen by lot`], `AC XXIII (1 Tim. 3:2)`),
+M(`AC XXIII says that "four hundred years ago" in Germany, the Archbishop of Mayence (Mainz) was nearly killed while publishing the pope's decree on:`,
+  [`Compulsory celibacy for priests`,`Papal taxation`,`The cult of saints`,`The Mass`,`Pilgrimages`], `AC XXIII`),
+M(`AC XXIV says the Mass is not abolished among the Lutherans, but is:`,
+  [`Retained and celebrated with the highest reverence`,`Replaced by preaching`,`Held only on Easter`,`Said only in German`,`Limited to the clergy`], `AC XXIV`),
+M(`In AC XXIV, German hymns were interspersed among the Latin parts to:`,
+  [`Teach the people`,`Shorten the service`,`Please the princes`,`Replace the liturgy`,`Honor the saints`], `AC XXIV`),
+M(`In AC XXIV, Paul is cited as commanding the use in church of:`,
+  [`A language understood by the people`,`The Hebrew tongue`,`The Latin tongue`,`Silence in assembly`,`Ancient chants only`], `AC XXIV (1 Cor. 14)`),
+M(`According to AC XXIV, none are admitted to the Sacrament unless they have first been:`,
+  [`Examined`,`Confirmed by a bishop`,`Fasting for three days`,`Enrolled in the parish`,`Anointed`], `AC XXIV`),
+M(`AC XXIV says private Masses were discontinued among the Lutherans because they had been celebrated for:`,
+  [`Lucre (gain)`,`Love of the saints`,`The dead only`,`The sake of ritual`,`The pope's favor`], `AC XXIV`),
+M(`In AC XXIV, the opinion that the Mass takes away the sins of the living and the dead is described as working:`,
+  [`By the outward act (ex opere operato)`,`By faith in the promise`,`By the minister's merit`,`By the people's prayers`,`By the bishop's blessing`], `AC XXIV`),
+M(`AC XXIV criticizes the view that Christ's passion made satisfaction for original sin, and that the Mass was instituted as an offering for:`,
+  [`Daily sins, mortal and venial`,`Original sin alone`,`Sins of the clergy only`,`Sins of the dead only`,`Sins against the Church`], `AC XXIV`),
+M(`According to AC XXV, the people are taught to prize absolution as being:`,
+  [`God's voice, pronounced by God's command`,`The priest's gift`,`A merit of the confessor`,`A reward for contrition`,`The church's tradition`], `AC XXV`),
+M(`In AC XXV, which text from Jeremiah is paired with Psalm 19:12 to show that enumeration of sins is impossible?`,
+  [`Jeremiah 17:9`,`Jeremiah 31:31`,`Jeremiah 1:5`,`Jeremiah 29:11`,`Jeremiah 23:5`], `AC XXV`),
+M(`In AC XXV, which father is quoted as saying: "Confess your sins before God, the true Judge, with prayer"?`,
+  [`Chrysostom`,`Augustine`,`Jerome`,`Ambrose`,`Cyprian`], `AC XXV`),
+M(`AC XXV says that the Gloss admits that confession is:`,
+  [`Of human right only`,`Commanded by Scripture`,`Required by the apostles`,`A sacrament of divine origin`,`Binding on the clergy only`], `AC XXV`),
+M(`AC XXVI says it was the general persuasion that distinctions of foods and similar traditions were works profitable to:`,
+  [`Merit grace and make satisfaction for sins`,`Maintain civil order`,`Honor the emperor`,`Instruct the young`,`Keep the calendar`], `AC XXVI`),
+M(`The first harm of such traditions, according to AC XXVI, is that they obscured:`,
+  [`The doctrine of grace and the righteousness of faith`,`The authority of bishops`,`The calendar of feasts`,`The use of the vernacular`,`The practice of almsgiving`], `AC XXVI`),
+M(`AC XXVI says that traditions also obscured God's commandments, since works like a father's raising his children were counted as:`,
+  [`Worldly and imperfect`,`Meritorious`,`Sacramental`,`Priestly`,`Superfluous`], `AC XXVI`),
+M(`AC XXVI cites which theologian as writing that many fell into despair, and some even took their own lives, because they could not satisfy the traditions?`,
+  [`Gerson`,`Aquinas`,`Scotus`,`Bernard`,`Bonaventure`], `AC XXVI`),
+M(`AC XXVI cites Augustine's advice to Januarius that such observances are to be treated as:`,
+  [`Things indifferent`,`Commands of God`,`Necessary for salvation`,`Marks of the true church`,`Rites to be abolished`], `AC XXVI`),
+M(`In AC XXVI, Christ's saying "In vain do they worship Me, teaching as doctrines the precepts of men" is found in:`,
+  [`Matthew 15:9`,`Mark 7:5`,`Luke 11:42`,`Matthew 23:3`,`John 4:24`], `AC XXVI`),
+M(`AC XXVI says that Paul's statement "I pommel my body and subdue it" shows that bodily discipline is for:`,
+  [`Keeping the body in subjection, not for meriting forgiveness`,`Meriting forgiveness`,`Satisfying for sins`,`Appeasing God`,`Earning heaven`], `AC XXVI (1 Cor. 9:27)`),
+M(`According to AC XXVII, in Augustine's time the monasteries were:`,
+  [`Free associations`,`Imperial prisons`,`Schools of the bishops only`,`Orders of the pope`,`Hospitals`], `AC XXVII`),
+M(`AC XXVII says vows were added later in order to restore:`,
+  [`Discipline`,`Wealth`,`Learning`,`Prayer`,`Obedience to the bishop`], `AC XXVII`),
+M(`In AC XXVII, the Lutherans reject the claim that monastic vows were:`,
+  [`Equal to Baptism`,`Binding by civil law`,`Customary in the early church`,`Permitted for adults`,`Subject to dispensation`], `AC XXVII`),
+M(`Which king, "called back from the monastery," does AC XXVII cite as an example of dispensation from vows?`,
+  [`The King of Aragon`,`The King of France`,`The King of Spain`,`The King of Hungary`,`The King of England`], `AC XXVII`),
+M(`In AC XXVII, which text is cited: "It is not good that the man should be alone"?`,
+  [`Genesis 2:18`,`Genesis 1:28`,`Genesis 3:16`,`Proverbs 18:22`,`1 Corinthians 7:1`], `AC XXVII`),
+M(`In AC XXVII, the Lutherans say a vow ought to be possible, free, and:`,
+  [`Chosen spontaneously and deliberately`,`Witnessed by a bishop`,`Approved by the pope`,`Taken before age twenty`,`Made in public`], `AC XXVII`),
+M(`AC XXVIII says that many have awkwardly confounded the power of the church with the power of:`,
+  [`The sword`,`The keys`,`The pen`,`The purse`,`The council`], `AC XXVIII`),
+M(`According to AC XXVIII, the power of the keys, or the power of bishops according to the Gospel, is a commandment of God to preach the Gospel, remit and retain sins, and:`,
+  [`Administer the sacraments`,`Govern the empire`,`Impose civil penalties`,`Appoint rulers`,`Collect tithes`], `AC XXVIII`),
+M(`In AC XXVIII, "As the Father has sent Me, even so I send you" is cited from:`,
+  [`John 20:21`,`Matthew 28:19`,`Mark 16:15`,`Luke 24:47`,`Acts 1:8`], `AC XXVIII`),
+M(`In AC XXVIII, the church's power does not interfere with civil government any more than:`,
+  [`The art of singing`,`The art of medicine`,`The art of writing`,`The craft of building`,`The study of law`], `AC XXVIII`),
+M(`In AC XXVIII, Christ's words "Who made Me a judge or divider over you?" are found in:`,
+  [`Luke 12:14`,`John 18:36`,`Matthew 22:21`,`Mark 12:17`,`John 6:15`], `AC XXVIII`),
+M(`AC XXVIII says that if bishops have the power of the sword, they have it not as bishops, but by:`,
+  [`Human law, given by kings and emperors`,`Divine right`,`The Gospel's commission`,`Apostolic succession`,`The pope's decree`], `AC XXVIII`),
+M(`Which of the following does AC XXVIII say belongs to bishops by divine right?`,
+  [`To judge doctrine and exclude the wicked, without human force, by the Word`,`To impose civil penalties`,`To judge matrimonial cases`,`To collect tithes`,`To appoint magistrates`], `AC XXVIII`),
+M(`According to AC XXVIII, which Gospel text commands congregations to obey bishops teaching rightly: "He who hears you hears Me"?`,
+  [`Luke 10:16`,`Matthew 18:17`,`John 13:20`,`Mark 6:11`,`Matthew 10:40`], `AC XXVIII`),
+M(`In AC XXVIII, which father is quoted as saying that we must not submit even to catholic bishops if they err against the Canonical Scriptures?`,
+  [`Augustine`,`Jerome`,`Ambrose`,`Cyprian`,`Chrysostom`], `AC XXVIII`),
+M(`AC XXVIII says that jurisdiction in matrimonial cases and tithes is held by bishops:`,
+  [`By human right`,`By divine right`,`By apostolic succession`,`By the Gospel`,`By Scripture`], `AC XXVIII`),
+M(`In AC XXVIII, the opponents point to the change of the Sabbath to the Lord's Day as evidence that the church's power could:`,
+  [`Dispense with one of the Ten Commandments`,`Add a new commandment`,`Abolish the Law`,`Establish new sacraments`,`Appoint new apostles`], `AC XXVIII`),
+/* ======================= APOLOGY ======================= */
+T(`Apology, Part 1 (Original Sin and Justification)`, `Apology of the AC`),
+N(`In what year was the Apology of the Augsburg Confession published?`,
+  [`1530`,`1531`,`1537`,`1555`,`1577`], `B`, `Apology, Preface`, `Written after the emperor refused to accept the first draft.`),
+M(`To whom is the Apology addressed?`,
+  [`Emperor Charles V`,`The pope`,`The Elector of Saxony`,`The Diet of Regensburg`,`The Council of Trent`], `Apology, Preface`),
+M(`In Ap II, Melanchthon rejects the scholastic claim that original sin is merely:`,
+  [`The lack of original righteousness, with concupiscence only a penalty and not sin`,`A hereditary disease`,`An imitation of Adam`,`The loss of Baptism`,`A corruption of the entire nature`], `Ap II`),
+M(`According to Ap II, original sin includes ignorance of God, contempt for God, and:`,
+  [`Lack of fear and trust in God`,`Only the loss of reason`,`Moral error without guilt`,`Physical death only`,`Social injustice`], `Ap II`),
+M(`Melanchthon argues in Ap IV that faith justifies not because it is a worthy work but because it:`,
+  [`Receives the promised mercy for Christ's sake`,`Merits eternal life by condignity`,`Produces love`,`Satisfies the Law`,`Exceeds other virtues`], `Ap IV`),
+M(`The "merit of congruity" (meritum de congruo), as the opponents taught it, meant that a person:`,
+  [`Earns grace by fitting preparation from natural powers`,`Merits eternal life by strict right`,`Receives merits from the saints`,`Is justified by Baptism alone`,`Is forgiven without any change`], `Ap IV`),
+M(`Melanchthon says the Law always:`,
+  [`Accuses`,`Justifies`,`Comforts`,`Saves`,`Perfects love`], `Ap IV`, `Lex semper accusat.`),
+M(`Ap IV accuses the opponents of making Christ into a:`,
+  [`New Moses or lawgiver`,`Mere example only`,`Priest without a sacrifice`,`Teacher of philosophy`,`Prophet without a kingdom`], `Ap IV`),
+M(`In Ap IV, the opponents' "faith" is charged with being only:`,
+  [`Historical knowledge, which even demons have`,`Trust in Christ's blood`,`A work of love`,`A mystical experience`,`Obedience to the church`], `Ap IV`, `Cf. James 2:19.`),
+M(`Which Gospel account does Melanchthon treat at length against the claim that love justifies?`,
+  [`The sinful woman who anointed Jesus' feet (Luke 7)`,`The rich young ruler`,`The prodigal son`,`The Samaritan woman`,`The ten lepers`], `Ap IV`),
+M(`Which Old Testament verse about Abraham stands behind Ap IV's teaching of imputed righteousness?`,
+  [`Genesis 15:6`,`Genesis 22:12`,`Exodus 20:3`,`Psalm 1:1`,`Isaiah 53:5`], `Ap IV`, `Cf. Romans 4.`),
+M(`How does Ap IV interpret James's statement that faith without works is dead?`,
+  [`As describing faith that bears no fruit, which is not true faith`,`As rejecting justification by faith`,`As teaching the merit of works`,`As describing ceremonial works only`,`As a later interpolation`], `Ap IV`),
+M(`Ap IV says that without Christ as ____ the Law cannot be kept and reconciliation cannot be had.`,
+  [`Mediator and propitiator`,`Judge only`,`Example only`,`Lawgiver`,`Teacher`], `Ap IV`),
+
+T(`Apology, Part 2 (Articles V-XXI)`, `Apology of the AC`),
+M(`In Ap VII-VIII, Melanchthon says the wicked and hypocrites in the visible church:`,
+  [`Have the names and offices of the church but are not truly members of Christ's kingdom`,`Are the true church`,`Cancel the sacraments`,`Must be excluded for the church to exist`,`Cannot be baptized`], `Ap VII-VIII`),
+M(`Ap VII-VIII sets the church, as Christ's kingdom, over against the kingdom of:`,
+  [`The devil`,`The Roman Empire`,`The Jews`,`The papacy`,`The world's princes`], `Ap VII-VIII`),
+M(`Ap IX argues that infants should be baptized because:`,
+  [`The promise of salvation belongs also to little children`,`Baptism builds the church's treasury`,`Their parents' faith is meritorious`,`It is an ancient custom without scriptural support`,`They can understand the doctrine`], `Ap IX`),
+M(`How did the Roman Confutation treat AC X on the Lord's Supper?`,
+  [`It approved it`,`It condemned it`,`It ignored it`,`It demanded revision`,`It postponed it`], `Ap X`),
+M(`Ap XII criticizes the scholastic teaching that imperfect sorrow, called attrition, could:`,
+  [`Become contrition by virtue of the sacrament`,`Replace faith entirely`,`Remove original sin`,`Dispense from Baptism`,`Make absolution unnecessary`], `Ap XII`),
+M(`According to Ap XIII, a sacrament is a rite which has:`,
+  [`The command of God and the promise of grace`,`The approval of the Fathers`,`A visible element only`,`The authority of the bishop`,`A long-standing custom`], `Ap XIII`),
+M(`In Ap XIV, Melanchthon says the Lutherans would willingly keep:`,
+  [`The church polity and the ranks of bishops, if the bishops would not force the Gospel's suppression`,`The pope's supremacy by divine right`,`Private masses`,`Monastic orders`,`The doctrine of merit`], `Ap XIV`),
+M(`Ap XVI teaches that the Gospel:`,
+  [`Does not overturn civil order but approves lawful government, property, contracts, and marriage`,`Abolishes civil government`,`Requires Christians to avoid public office`,`Forbids all oaths`,`Gives bishops the sword`], `Ap XVI`),
+M(`Ap XVIII affirms that human reason has some freedom to:`,
+  [`Do civil righteousness and choose outward works`,`Earn the Holy Spirit`,`Love God above all things by nature`,`Believe the Gospel by nature`,`Fulfill the First Table`], `Ap XVIII`),
+M(`In Ap XXI, which three ways of honoring the saints does Melanchthon allow?`,
+  [`Thanksgiving, strengthening of faith by their example, and imitation`,`Invocation, relics, and pilgrimage`,`Images, feast days, and indulgences`,`Mediation, intercession, and merit`,`Petition, offering, and vow`], `Ap XXI`),
+M(`Concerning the saints in heaven, Ap XXI concedes that they may:`,
+  [`Pray for the church in general, though Scripture does not command invoking them`,`Mediate between us and Christ`,`Grant merits to us`,`Apply surplus merits`,`Hear every private prayer and answer it`], `Ap XXI`),
+
+T(`Apology, Part 3 (Articles XXII-XXVIII)`, `Apology of the AC`),
+M(`In Ap XXII, Melanchthon argues that withholding the cup from the laity:`,
+  [`Is contrary to Christ's institution and the ancient practice`,`Is commanded by Scripture`,`Was approved at Nicaea`,`Is necessary to honor the sacrament`,`Is a matter that may be commanded`], `Ap XXII`),
+M(`In Ap XXIII, the Lutherans defend priestly marriage chiefly on the ground that:`,
+  [`Marriage is God's ordinance, and forbidding it is contrary to divine and natural law`,`Canon law allows it`,`The pope has permitted it`,`It was customary in monasteries`,`It is necessary for ordination`], `Ap XXIII`),
+M(`In Ap XXIV, Melanchthon distinguishes the propitiatory sacrifice from the:`,
+  [`Eucharistic sacrifice (of thanksgiving)`,`Symbolic sacrifice`,`Monastic sacrifice`,`Legal sacrifice`,`Temporal sacrifice`], `Ap XXIV`),
+M(`In Ap XXIV, the opponents' ex opere operato, as applied to the Mass, means that:`,
+  [`The rite benefits others merely by being performed, without a good motion in the user`,`The sacrament depends on the minister's holiness`,`The Mass works through faith in the Word`,`The rite is merely a memorial`,`The rite benefits only the priest`], `Ap XXIV`),
+M(`Which New Testament epistle is most prominent in Ap XXIV's argument that Christ's sacrifice was once for all?`,
+  [`Hebrews`,`Romans`,`Galatians`,`James`,`Jude`], `Ap XXIV`),
+M(`Which of the following is NOT listed in Ap XXIV as a eucharistic sacrifice?`,
+  [`The Mass as propitiation for the living and the dead`,`Proclamation of the Gospel`,`Faith, prayer, and thanksgiving`,`The afflictions of the saints`,`Confession`], `Ap XXIV`),
+M(`In Ap XXVI, how do the Lutherans view fasting?`,
+  [`They approve it as bodily discipline but reject it as a work that merits grace`,`They abolish it entirely`,`They require it by divine law`,`They forbid it`,`They reserve it for the clergy`], `Ap XXVI`),
+M(`Ap XXVII rejects the opponents' claim that monastic life is:`,
+  [`A state of perfection that merits justification`,`A permitted human estate`,`A matter of conscience`,`An ancient practice`,`Subject to civil law`], `Ap XXVII`),
+M(`Ap XXVIII, like AC XXVIII, warns against confusing:`,
+  [`The spiritual power of the church and the power of the sword`,`Law and promises`,`Faith and love`,`Baptism and the Supper`,`The two natures of Christ`], `Ap XXVIII`),
+
+/* ======================= SMALCALD ARTICLES ======================= */
+T(`Smalcald Articles, Parts I-II`, `Smalcald Articles`),
+N(`In which year did Luther write the Smalcald Articles?`,
+  [`1529`,`1530`,`1536`,`1546`,`1555`], `C`, `SA, Preface`, `Written in late 1536 for the meeting of the Smalcaldic League in 1537.`),
+M(`Where did the Lutheran theologians meet in February 1537 to consider the Articles?`,
+  [`Smalcald (Schmalkalden)`,`Augsburg`,`Coburg`,`Worms`,`Marburg`], `SA, Preface`),
+M(`What illness struck Luther at Smalcald and kept him from presenting his Articles?`,
+  [`Kidney stones`,`Malaria`,`Plague`,`Tuberculosis`,`Smallpox`], `SA (historical)`),
+M(`In Part I of the Smalcald Articles, the "high articles of the divine majesty" are those on:`,
+  [`The Trinity and the person of Christ, on which there is no dispute with Rome`,`Justification and the Mass`,`The papacy`,`Baptism and confession`,`The invocation of saints`], `SA I`),
+M(`Luther says that on the "first and chief article" rests:`,
+  [`All that we teach and practice against the pope, the devil, and the world`,`The authority of the bishops`,`The use of ceremonies`,`The practice of private masses`,`The cult of the saints`], `SA II i`),
+M(`According to SA II ii, the Mass as practiced in the papacy is:`,
+  [`The greatest and most horrible abomination, because it contradicts the first article`,`A harmless custom`,`A matter of indifference`,`A source of unity`,`A compromise to be negotiated`], `SA II ii`),
+M(`In SA II ii, Luther links the Mass with which of the following as growths from the same root?`,
+  [`Purgatory, pilgrimages, relics, and indulgences`,`Baptism and confirmation`,`Sermons and hymns`,`Catechisms`,`Ordination of ministers`], `SA II ii`),
+M(`SA II iii treats which two institutions that Luther thought should be abolished or put to proper use?`,
+  [`Chapters and monasteries`,`Universities and schools`,`Cathedrals and parishes`,`Diets and councils`,`Courts and prisons`], `SA II iii`),
+M(`SA II iv states that the pope is:`,
+  [`The very Antichrist`,`The head of the church by divine right`,`A helpful bishop`,`A symbol of unity`,`A legitimate emperor`], `SA II iv`),
+M(`In SA II iv, Luther says the church can exist without the pope because its head is:`,
+  [`Christ`,`The emperor`,`A council`,`The bishops`,`The Elector`], `SA II iv`),
+
+T(`Smalcald Articles, Part III`, `Smalcald Articles`),
+M(`Part III of the Smalcald Articles contains articles which Luther says may be discussed with:`,
+  [`Learned and sensible men, or among ourselves`,`The pope alone`,`The emperor only`,`Foreign kings`,`Monks`], `SA III, Introduction`),
+M(`In SA III i, which psalm verse does Luther cite for hereditary sin: "In sin did my mother conceive me"?`,
+  [`Psalm 51:5`,`Psalm 22:1`,`Psalm 23:1`,`Psalm 119:105`,`Psalm 130:3`], `SA III i`),
+M(`According to SA III ii, the chief function of the Law is to:`,
+  [`Reveal inherited sin and its fruits`,`Merit eternal life`,`Replace the Gospel`,`Make people morally perfect`,`Establish the church's rites`], `SA III ii`),
+M(`In SA III iii, Luther says the papists' repentance fails because it leaves out:`,
+  [`The Gospel and the promise of forgiveness for Christ's sake`,`Fasting`,`Confession to bishops`,`Celibacy`,`The doctrine of the Trinity`], `SA III iii`),
+M(`SA III iv cites Matthew 18:20 in connection with:`,
+  [`The mutual conversation and consolation of the brethren`,`Ordination`,`The invocation of saints`,`The Mass`,`Pilgrimage`], `SA III iv`),
+M(`In SA III vi, Luther rejects transubstantiation and affirms that bread and wine:`,
+  [`Remain, and the true body and blood are present in and under them`,`Cease to exist`,`Are symbols only`,`Become mere memory`,`Are transformed into spirit`], `SA III vi`),
+M(`In SA III vii-viii, Luther says private absolution should:`,
+  [`Be retained in the church`,`Be abolished`,`Be limited to monks`,`Be paid for`,`Be required daily`], `SA III vii-viii`),
+M(`In SA III viii, Luther calls "enthusiasm" the old devil because it:`,
+  [`Rejects the external Word and boasts of the Spirit apart from it`,`Teaches justification by faith`,`Loves ritual`,`Defends the sacraments`,`Teaches the Trinity`], `SA III viii`),
+M(`In SA III xii, Luther says that "a seven-year-old child knows what the church is," namely:`,
+  [`Holy believers and sheep who hear the voice of their Shepherd`,`The bishops and clergy`,`The Roman curia`,`The city of Rome`,`The councils`], `SA III xii`),
+M(`In SA III xv, Luther says human traditions are to be rejected when they:`,
+  [`Are required as necessary for salvation or as a service that merits grace`,`Are used for good order`,`Concern singing`,`Concern times of services`,`Are offered by bishops`], `SA III xv`),
+
+/* ======================= TREATISE ======================= */
+T(`Treatise on the Power and Primacy of the Pope`, `Treatise on the Power and Primacy of the Pope`),
+M(`Who wrote the Treatise on the Power and Primacy of the Pope?`,
+  [`Philip Melanchthon`,`Martin Luther`,`Martin Chemnitz`,`Johann Brenz`,`Justus Jonas`], `Treatise (historical)`),
+N(`In what year was the Treatise adopted at Smalcald and appended to the Smalcald Articles?`,
+  [`1530`,`1535`,`1537`,`1546`,`1555`], `C`, `Treatise (historical)`),
+M(`The Treatise takes up three claims made by the pope. Which of these is one of them?`,
+  [`That believing in papal supremacy is necessary for salvation`,`That the pope may not marry`,`That the pope alone may baptize`,`That the pope is the emperor's vassal`,`That councils are superior to the pope`], `Treatise, opening`),
+M(`The Treatise interprets "On this rock I will build My church" (Matt. 16:18) as referring to:`,
+  [`Peter's confession, that is, Christ the Rock`,`Peter's person alone`,`The city of Rome`,`The apostles' successors`,`The papacy`], `Treatise on Matt. 16`),
+M(`Which saying in Luke 22 does the Treatise cite against papal lordship?`,
+  [`"The kings of the Gentiles exercise lordship over them; but not so with you"`,`"Feed My lambs"`,`"Simon, Simon, Satan has desired to sift you"`,`"Go and make disciples"`,`"Peace I leave with you"`], `Treatise`),
+M(`Which episode does the Treatise use to show that Paul did not regard himself as subject to Peter?`,
+  [`Paul's opposing Peter to his face at Antioch (Galatians 2)`,`Paul's conversion on the road to Damascus`,`Paul's shipwreck`,`Paul's trial before Festus`,`Paul's visit to Athens`], `Treatise`),
+M(`The Treatise teaches that the pope is the true Antichrist, appealing to the description in:`,
+  [`2 Thessalonians 2`,`Genesis 3`,`Romans 13`,`1 Timothy 3`,`James 5`], `Treatise`),
+M(`Which pope does the Treatise cite as saying that whoever calls himself "universal bishop" is a forerunner of Antichrist?`,
+  [`Gregory the Great`,`Leo the Great`,`Innocent III`,`Boniface VIII`,`Urban II`], `Treatise`),
+M(`According to the Treatise, where there is a church, there is the right to:`,
+  [`Elect and ordain ministers`,`Depose emperors`,`Issue indulgences`,`Establish monasteries`,`Impose pilgrimages`], `Treatise, on the call of ministers`),
+M(`The Treatise says that jurisdiction in marriage cases, which the bishops claimed, belongs properly to:`,
+  [`Civil government, since the bishops' courts have abused it`,`The pope alone`,`Monastic orders`,`The universities`,`The consistories of the church`], `Treatise, on jurisdiction`),
+/* ======================= SMALL CATECHISM ======================= */
+T(`Small Catechism, Part 1 (Commandments and Creed)`, `Small Catechism`),
+M(`Which phrase begins Luther's explanation of the Second through Tenth Commandments?`,
+  [`"We should fear and love God so that..."`,`"God commands us..."`,`"It is forbidden..."`,`"We confess that..."`,`"The Lord requires..."`], `SC I`),
+M(`Luther's explanation of the First Commandment is:`,
+  [`We should fear, love, and trust in God above all things`,`We should not worship idols`,`We should obey the pope`,`We should honor the saints`,`We should keep the Sabbath`], `SC I`),
+M(`In the explanation of the Second Commandment, we are to call on God's name in every trouble, and to:`,
+  [`Pray, praise, and give thanks`,`Fast, confess, and do penance`,`Preach, baptize, and absolve`,`Study, argue, and judge`,`Sing, dance, and feast`], `SC I`),
+M(`According to the explanation of the Fourth Commandment, we should honor, serve, obey, love, and:`,
+  [`Cherish our parents and other authorities`,`Pay tribute to them`,`Fear them`,`Imitate the saints`,`Avoid them`], `SC I`),
+M(`Luther's explanation of the Fifth Commandment says we are not only not to harm our neighbor in his body, but also to:`,
+  [`Help and befriend him in every bodily need`,`Pray for his soul`,`Report him to the authorities`,`Forgive his debts`,`Avoid his company`], `SC I`),
+M(`The explanation of the Sixth Commandment says we should lead a chaste and decent life in word and deed, and:`,
+  [`Each love and honor his spouse`,`Avoid all marriage`,`Take vows of celibacy`,`Fast on Fridays`,`Remain separate from society`], `SC I`),
+M(`The explanation of the Eighth Commandment says we should defend our neighbor, speak well of him, and:`,
+  [`Explain everything in the kindest way`,`Report his faults to the authorities`,`Warn others of his reputation`,`Avoid his company`,`Pray that he repents`], `SC I`),
+M(`According to the explanation of the Tenth Commandment, we should not entice, force, or steal away our neighbor's spouse, workers, or livestock, but:`,
+  [`Urge them to stay and do their duty`,`Offer them better wages`,`Let them choose freely`,`Report them to the bishop`,`Ignore them`], `SC I`),
+M(`In the Conclusion to the Commandments, God threatens to punish all who transgress them, and promises:`,
+  [`Grace and every blessing to all who keep them`,`That everyone will be saved`,`Temporal rewards only to rulers`,`Nothing to those who keep them`,`Merit by works`], `SC I, Conclusion`),
+M(`In the explanation of the First Article, Luther says God provides all this "only out of fatherly, divine goodness and mercy, without any ____ in me."`,
+  [`Merit or worthiness`,`Faith or love`,`Prayer or fasting`,`Obedience or repentance`,`Sacrifice or offering`], `SC II, First Article`),
+M(`In the explanation of the Second Article, Christ redeemed me "not with gold or silver, but with":`,
+  [`His holy, precious blood and His innocent suffering and death`,`The merits of the saints`,`The gift of the Spirit`,`The authority of the bishops`,`The works of the law`], `SC II, Second Article`),
+M(`In the Second Article, Luther says Christ redeemed me so that I may be His own, live under Him in His kingdom, and:`,
+  [`Serve Him in everlasting righteousness, innocence, and blessedness`,`Earn merit by my deeds`,`Rule over my neighbors`,`Withdraw from the world`,`Fast and pray`], `SC II, Second Article`),
+M(`Which four verbs describe the Holy Spirit's work in Luther's explanation of the Third Article?`,
+  [`Called, enlightened, sanctified, kept`,`Elected, justified, glorified, crowned`,`Taught, converted, baptized, absolved`,`Created, redeemed, sanctified, raised`,`Warned, convicted, punished, forgave`], `SC II, Third Article`),
+M(`Luther's explanation of the Third Article says that in the Christian church the Spirit daily and richly forgives:`,
+  [`All sins to me and all believers`,`Only the sins of the clergy`,`Only sins committed before Baptism`,`Only venial sins`,`The sins of the dead`], `SC II, Third Article`),
+M(`In the Preface, Luther advises pastors to teach the catechism text:`,
+  [`In one fixed form, repeated year after year`,`In a different form each year`,`Only to children`,`Only in Latin`,`Only to those preparing for the ministry`], `SC, Preface`),
+
+T(`Small Catechism, Part 2 (Lord's Prayer and Daily Devotions)`, `Small Catechism`),
+M(`In the explanation of the First Petition, Luther says God's name is indeed holy in itself, but we pray that it may be:`,
+  [`Kept holy among us also`,`Spoken only in Latin`,`Hidden from sinners`,`Used only by clergy`,`Written in all churches`], `SC III`),
+M(`The Second Petition's explanation says God's kingdom comes when the heavenly Father gives us His Holy Spirit, so that by His grace we:`,
+  [`Believe His holy Word and live godly lives here in time and hereafter forever`,`Merit eternal life`,`Establish an earthly kingdom`,`Defeat the church's enemies`,`Perfect the church by our works`], `SC III`),
+M(`According to the Third Petition, God's will is done when He breaks and hinders every evil counsel and will, and:`,
+  [`Strengthens and keeps us steadfast in His Word and in faith until our end`,`Punishes all sinners immediately`,`Gives us earthly wealth`,`Removes all trials`,`Ends the world`], `SC III`),
+M(`The explanation of the Fourth Petition lists daily bread as including food, drink, clothing, house and home, and also:`,
+  [`Good government, good weather, peace, health, and faithful neighbors`,`Spiritual gifts only`,`The merits of the saints`,`The sacraments`,`Church offices`], `SC III`),
+M(`In the Fifth Petition, we pray that God would not look upon our sins nor deny our prayer because of them, since we are worthy of:`,
+  [`None of the things for which we pray`,`Some of the things for which we pray`,`Everything we ask`,`Only what we have earned`,`Forgiveness by our own works`], `SC III`),
+M(`Which three enemies does the Sixth Petition's explanation name as those that would deceive or mislead us?`,
+  [`The devil, the world, and our flesh`,`Sin, death, and hell`,`Pope, emperor, and heretics`,`Law, wrath, and judgment`,`Pride, envy, and anger`], `SC III`),
+M(`In the Seventh Petition, we ask that at our last hour God would grant us a blessed end and take us from:`,
+  [`This vale of tears to Himself in heaven`,`Purgatory to paradise`,`Death to the resurrection immediately`,`Our enemies to safety`,`Temptation to the church`], `SC III`),
+M(`According to the Small Catechism, "Amen" means:`,
+  [`"Yes, yes, it shall be so"`,`"Glory to God"`,`"So be it, if we merit it"`,`"Forever and ever"`,`"Lord, have mercy"`], `SC III`),
+M(`The Small Catechism's table blessing opens with a text from which psalm?`,
+  [`Psalm 145`,`Psalm 23`,`Psalm 51`,`Psalm 100`,`Psalm 150`], `SC, Daily Prayers`),
+M(`The Morning and Evening Prayers begin with:`,
+  [`The sign of the holy cross and "In the name of the Father, and of the Son, and of the Holy Spirit"`,`The Lord's Prayer`,`The Creed`,`A psalm`,`A confession of sins`], `SC, Daily Prayers`),
+M(`The Table of Duties, speaking to fathers, directs them not to provoke their children to anger, citing:`,
+  [`Ephesians 6`,`Romans 13`,`1 Peter 2`,`Hebrews 13`,`1 Timothy 3`], `SC, Table of Duties`),
+M(`The Table of Duties addresses governing authorities with which text?`,
+  [`Romans 13:1-4`,`Matthew 5:1-12`,`Luke 22:25`,`John 18:36`,`Acts 5:29`], `SC, Table of Duties`),
+M(`In the Table of Duties, young people are told to be subject to those who are older, citing:`,
+  [`1 Peter 5`,`Titus 2`,`Proverbs 1`,`Ephesians 4`,`Psalm 78`], `SC, Table of Duties`),
+
+T(`Small Catechism, Part 3 (Baptism, Confession, Supper)`, `Small Catechism`),
+M(`According to the Small Catechism, what does Baptism work?`,
+  [`Forgiveness of sins, deliverance from death and the devil, and eternal salvation to all who believe`,`A sign of membership only`,`Merit for those baptized`,`A new set of laws`,`Release from civil duties`], `SC IV`),
+M(`Which text does the Small Catechism quote for Baptism: "He who believes and is baptized will be saved"?`,
+  [`Mark 16:16`,`Matthew 28:19`,`John 3:5`,`Acts 2:38`,`Romans 6:4`], `SC IV`),
+M(`According to the Fourth Part on Baptism, what does baptizing with water signify?`,
+  [`The Old Adam is to be drowned by daily sorrow and repentance, and a new man daily arise`,`Cleansing of the body`,`Reception into the congregation`,`The washing of the sacrament`,`The sealing of the elect`], `SC IV`),
+M(`Which text is quoted for the meaning of Baptism: "We were buried with Him by Baptism into death"?`,
+  [`Romans 6:4`,`Titus 3:5`,`Galatians 3:27`,`1 Peter 3:21`,`Ephesians 5:26`], `SC IV`),
+M(`How does the Small Catechism define Confession?`,
+  [`Confessing our sins, and receiving absolution from the pastor as from God Himself`,`Reciting the Creed`,`Listing all sins before a priest`,`Doing penance`,`Making satisfaction`], `SC, Confession`),
+M(`According to the Small Catechism, before God we should plead guilty of all sins, but before the pastor we should confess only:`,
+  [`Those sins which we know and feel in our hearts`,`All sins we have ever committed`,`Sins of the past week`,`Only mortal sins`,`Only sins against the commandments`], `SC, Confession`),
+M(`The Small Catechism calls the Office of the Keys:`,
+  [`The special authority Christ gave His church to forgive the sins of the repentant and retain the sins of the unrepentant`,`The pope's exclusive prerogative`,`A ceremony`,`The right to depose bishops`,`The power of excommunication only`], `SC, Office of the Keys`),
+M(`Which text is cited for the Office of the Keys: "Receive the Holy Spirit. If you forgive the sins of any, they are forgiven them"?`,
+  [`John 20:22-23`,`Matthew 16:19`,`Matthew 18:18`,`Luke 24:47`,`Acts 2:38`], `SC, Office of the Keys`),
+M(`The Small Catechism defines the Sacrament of the Altar as the true body and blood of Christ:`,
+  [`Under the bread and wine, instituted by Christ for us Christians to eat and drink`,`In the bread and wine by change of substance`,`Symbolized by the bread and wine`,`Remembered in the bread and wine`,`Offered as a sacrifice`], `SC VI`),
+M(`The Small Catechism says that in the Sacrament forgiveness of sins, life, and salvation are given us through:`,
+  [`The words "Given and shed for you for the forgiveness of sins"`,`The faith of the priest`,`The merit of the communicant`,`Our preparation and fasting`,`The bread and wine themselves`], `SC VI`),
+M(`Whose accounts of the Words of Institution does the Small Catechism cite?`,
+  [`Matthew, Mark, Luke, and St. Paul`,`John only`,`Acts and Romans`,`Hebrews`,`Revelation`], `SC VI`),
+M(`According to the Small Catechism, the words "for you" require:`,
+  [`Hearts that believe`,`Perfect contrition`,`Priestly absolution`,`Fasting`,`Good works`], `SC VI`),
+
+/* ======================= LARGE CATECHISM ======================= */
+T(`Large Catechism, Part 1 (Prefaces and Commandments 1-3)`, `Large Catechism`),
+M(`According to the Long Preface, the Large Catechism is intended chiefly for:`,
+  [`Pastors and preachers, as a help in instructing the people`,`Children only`,`Bishops`,`Monks`,`University theologians`], `LC, Prefaces`),
+M(`The three chief parts every Christian must know, per Luther, are the Ten Commandments, the Creed, and:`,
+  [`The Lord's Prayer`,`The Sacraments`,`The Beatitudes`,`The Magnificat`,`The Psalms`], `LC, Prefaces`),
+M(`In the Long Preface, Luther warns pastors and preachers against:`,
+  [`Despising the catechism as childish when they have not yet mastered it`,`Using Latin in services`,`Marrying`,`Teaching the Creed`,`Studying the Fathers`], `LC, Long Preface`),
+M(`In LC I, Luther says that "trust and faith of the heart alone make" what?`,
+  [`Both God and an idol`,`A Christian`,`A righteous person`,`A priest`,`A saint`], `LC I, First Commandment`),
+M(`In the First Commandment, what does Luther name as the most common idol on earth?`,
+  [`Mammon (money and possessions)`,`Reason`,`The pope`,`The saints`,`Power`], `LC I, First Commandment`),
+M(`According to LC's Second Commandment, an oath is lawful when:`,
+  [`Required by civil authority for truth and the common good`,`Taken to settle every dispute`,`Used to promote a cause`,`Sworn by saints`,`Sworn only by clergy`], `LC I, Second Commandment`),
+M(`The LC's Second Commandment says God's name is misused when we:`,
+  [`Use it to curse, swear, lie, deceive, or practice magic`,`Preach it`,`Sing hymns`,`Pray in need`,`Praise it`], `LC I, Second Commandment`),
+M(`According to LC's Third Commandment, what makes a day or a place holy?`,
+  [`God's Word, which sanctifies all things`,`The priest's blessing`,`The calendar of the Old Testament`,`Church architecture`,`The number of attendants`], `LC I, Third Commandment`),
+M(`According to LC's Third Commandment, Christians keep Sunday because:`,
+  [`It is a convenient time set apart for hearing God's Word, not because it is divinely required`,`It replaces the Jewish Sabbath by divine law`,`The pope ordained it`,`It is necessary for salvation`,`It is the only day for worship`], `LC I, Third Commandment`),
+M(`Luther says that to "hallow the holy day" means above all to:`,
+  [`Hear, learn, and meditate on God's Word`,`Abstain from all work`,`Make pilgrimages`,`Observe fasts`,`Offer sacrifices`], `LC I, Third Commandment`),
+
+T(`Large Catechism, Part 2 (Commandments 4-10)`, `Large Catechism`),
+M(`In LC's Fourth Commandment, "father and mother" include:`,
+  [`Parents, heads of households, and those in civil authority`,`Only birth parents`,`Only bishops`,`Only teachers`,`Only church officers`], `LC I, Fourth Commandment`),
+M(`Luther says children who honor their parents may expect which promise?`,
+  [`Long life, "that it may go well with you"`,`Riches`,`Heaven`,`Fame`,`No trials`], `LC I, Fourth Commandment`),
+M(`LC's Fifth Commandment says we violate it if we:`,
+  [`Fail to help a neighbor in need when we are able`,`Eat meat on Friday`,`Neglect to attend Mass`,`Work on Sunday`,`Remain unmarried`], `LC I, Fifth Commandment`),
+M(`In the Sixth Commandment, Luther calls marriage:`,
+  [`A divinely instituted estate that should be honored`,`A concession to weakness`,`Inferior to celibacy`,`A sacrament of the church`,`A civil matter only`], `LC I, Sixth Commandment`),
+M(`In LC's Seventh Commandment, Luther says the greatest thieves are:`,
+  [`Powerful men who steal by influence and position, "sit in chairs and are called great lords"`,`Petty thieves in the street`,`Paupers`,`Foreigners`,`Peasants`], `LC I, Seventh Commandment`),
+M(`According to LC's Eighth Commandment, what should we do if a neighbor's sin is hidden?`,
+  [`Admonish him privately (Matthew 18) rather than slander him`,`Announce it publicly`,`Tell his employer`,`Report to the bishop`,`Ignore it`], `LC I, Eighth Commandment`),
+M(`In the Ninth Commandment, Luther objects to:`,
+  [`Obtaining a neighbor's property under a show of legal right`,`Selling goods`,`Making contracts`,`Paying taxes`,`Inheriting`], `LC I, Ninth Commandment`),
+M(`According to LC's Tenth Commandment, covetousness includes:`,
+  [`Luring away a neighbor's spouse, servants, or livestock`,`Admiring neighbors`,`Seeking employment`,`Praying for riches`,`Receiving gifts`], `LC I, Tenth Commandment`),
+M(`LC says the Ten Commandments are:`,
+  [`The highest teaching, summed up in love to God and neighbor`,`Abolished by Christ`,`Only for Jews`,`Only for rulers`,`Optional counsel`], `LC I`),
+M(`Luther concludes LC's treatment of the Commandments by urging us to:`,
+  [`Learn and teach them diligently, for they contain what God wants us to do`,`Memorize only the first three`,`Treat them as obsolete`,`Seek exemptions`,`Interpret them privately`], `LC I, Conclusion`),
+
+T(`Large Catechism, Part 3 (Creed and Lord's Prayer)`, `Large Catechism`),
+M(`Luther contrasts the Commandments and the Creed: the Commandments teach what we ought to do, but the Creed teaches:`,
+  [`What God has done for us`,`How to earn merit`,`How to worship`,`What the church requires`,`How to read Scripture`], `LC II`),
+M(`In LC II, the word "Lord" in the Second Article means that Christ:`,
+  [`Redeemed us from sin, the devil, death, and all evil`,`Rules over all kings`,`Wrote the law`,`Founded the sacraments`,`Appointed apostles`], `LC II`),
+M(`In LC II, Luther says the Holy Spirit makes us holy through:`,
+  [`The Christian church, the forgiveness of sins, the resurrection, and the life everlasting`,`Direct inspiration`,`The Law alone`,`Monastic life`,`Good works`], `LC II`),
+M(`In LC II, the church is called a "mother" because she:`,
+  [`Begets and bears every Christian through the Word of God`,`Cares for the poor`,`Protects the clergy`,`Educates children`,`Owns property`], `LC II`),
+M(`In LC III, Luther calls the Lord's Prayer:`,
+  [`The greatest martyr on earth`,`The shortest prayer`,`The least understood`,`Not suitable for children`,`Only for priests`], `LC III`),
+M(`In LC III, we pray because:`,
+  [`God commands us to pray and promises to hear us`,`We feel like praying`,`Prayer earns merit`,`Prayer is a custom`,`The church compels us`], `LC III`),
+M(`In LC III, how is God's name hallowed?`,
+  [`When both our teaching and our life are godly and Christian`,`When we say it often`,`When we avoid it`,`When we build temples`,`When we fast`], `LC III`),
+M(`In LC III's treatment of the Fifth Petition, Luther says our forgiving others is:`,
+  [`A sign and assurance that God has forgiven us`,`The cause of God's forgiveness`,`Unnecessary`,`Required only of rulers`,`A work that merits grace`], `LC III`),
+M(`In LC III, the Sixth Petition teaches that temptation comes from:`,
+  [`The flesh, the world, and the devil`,`God`,`The Law`,`The church`,`Our neighbors`], `LC III`),
+M(`In LC III, the Seventh Petition asks God to deliver us from:`,
+  [`Every evil of body and soul, property and honor, and finally to grant a blessed end`,`Only spiritual evil`,`Our neighbors`,`The devil alone`,`Civil laws`], `LC III`),
+
+T(`Large Catechism, Part 4 (Baptism, Supper, Confession)`, `Large Catechism`),
+M(`In LC IV, Luther says Baptism is not a human invention but:`,
+  [`God's own ordinance, commanded and instituted by Him`,`A custom of the apostles`,`A sign of obedience`,`A church ceremony`,`A work of the priest`], `LC IV`),
+M(`Luther says that if an unbeliever is baptized, Baptism is:`,
+  [`Still true Baptism, because it rests on God's Word`,`Invalid`,`Incomplete until faith comes`,`Provisional`,`Repeatable`], `LC IV`),
+M(`In LC IV, Luther says Baptism should be:`,
+  [`Practiced daily, as we return to it in repentance and faith`,`Repeated annually`,`Postponed until adulthood`,`Reserved for converts`,`Replaced by confirmation`], `LC IV`),
+M(`Luther rejects Jerome's saying that repentance is:`,
+  [`"The second plank after shipwreck"`,`"The key of knowledge"`,`"The first step to heaven"`,`"A second baptism"`,`"The door of faith"`], `LC IV`),
+M(`According to LC IV, what mistake would one make by thinking Baptism is only water?`,
+  [`Despising God's Word, which is in and with the water`,`Valuing sacraments too highly`,`Worshipping water`,`Ignoring ceremonies`,`Praising the priest`], `LC IV`),
+M(`How does LC V say the bread and wine become the body and blood of Christ?`,
+  [`By the Word of Christ`,`By the priest's power`,`By the people's faith`,`By the church's decree`,`By the Spirit independent of the Word`], `LC V`),
+M(`According to LC V, the Sacrament is the body and blood of Christ even when received by the unworthy because it:`,
+  [`Rests on Christ's Word and institution, not on our worthiness`,`Depends on the priest's holiness`,`Has no real effect`,`Does not require faith`,`Is only symbolic`], `LC V`),
+M(`According to LC V, those who despise the Sacrament and stay away from it for long:`,
+  [`Show they are no Christians, for they feel no need of the forgiveness it offers`,`Are excused`,`Are saints`,`Are subject to civil penalty`,`Must receive it daily`], `LC V`),
+M(`In the Brief Exhortation to Confession, Luther says confession is:`,
+  [`Voluntary, not compelled, yet a treasure he would not give up`,`Compulsory`,`Only for clergy`,`A work of penance`,`A means of merit`], `LC, Brief Exhortation to Confession`),
+M(`According to the Brief Exhortation, what are we to seek in private confession?`,
+  [`The comforting absolution as God's own word of forgiveness`,`Merit`,`A penance`,`Counsel in business matters`,`A list of sins`], `LC, Brief Exhortation to Confession`),
+/* ======================= FORMULA OF CONCORD ======================= */
+T(`Formula of Concord, Epitome I-VI`, `Formula of Concord`),
+M(`The Epitome says original sin differs from human nature because nature is God's creation, whereas original sin is:`,
+  [`The corruption of nature caused by the devil and the fall`,`The essence of man`,`God's creation`,`A mere accident of the body`,`The body itself`], `FC Ep I`),
+M(`In FC Ep II, after the Holy Spirit has brought a person to faith, the regenerate will:`,
+  [`Cooperates with the Holy Spirit in good works`,`Remains purely passive`,`Is returned to unbelief`,`Is no longer free`,`Dies to the world`], `FC Ep II`),
+M(`Stancarus taught that Christ is our mediator only according to His:`,
+  [`Human nature`,`Divine nature`,`Both natures equally`,`Office`,`Name`], `FC Ep III`),
+M(`According to the Epitome, our righteousness before God consists of:`,
+  [`The forgiveness of sins and the imputation of Christ's righteousness`,`An essential indwelling righteousness`,`Infused love`,`Works of the Spirit`,`Our own obedience`], `FC Ep III`),
+M(`Nicolaus von Amsdorf was rejected for teaching that good works are:`,
+  [`Detrimental to salvation`,`Necessary for salvation`,`Optional`,`Meritorious`,`Unrelated to faith`], `FC Ep IV`),
+M(`The Epitome says the regenerate do good works:`,
+  [`Spontaneously, not under coercion, as the Spirit moves them`,`Out of fear of punishment`,`To earn salvation`,`Only when commanded`,`Apart from the Spirit`], `FC Ep IV`),
+M(`According to the Epitome on Law and Gospel, the Law is:`,
+  [`Divine doctrine that reveals sin and God's wrath`,`The message of free forgiveness`,`Replaced by the Gospel`,`Only for the Jews`,`For unbelievers only`], `FC Ep V`),
+M(`In the strict sense, the Gospel is the teaching that:`,
+  [`Tells the sinner who has not kept the Law that God forgives him for Christ's sake`,`Teaches what to do`,`Gives rules`,`Reveals sin`,`Requires obedience`], `FC Ep V`),
+M(`The Epitome's article on the third use of the Law was written against the:`,
+  [`Antinomians`,`Pelagians`,`Arians`,`Donatists`,`Anabaptists`], `FC Ep VI`),
+M(`According to the Epitome, why must the regenerate still be taught the Law?`,
+  [`Because the old Adam still clings to them`,`Because they are not yet saved`,`Because the Gospel is insufficient`,`Because Baptism is incomplete`,`Because the Spirit is absent`], `FC Ep VI`),
+
+T(`Formula of Concord, Epitome VII-XII`, `Formula of Concord`),
+N(`How many articles does the Epitome of the Formula of Concord contain?`,
+  [`Seven`,`Ten`,`Twelve`,`Fifteen`,`Twenty-one`], `C`, `FC Ep`),
+M(`FC Ep VII teaches that in the Supper the true body and blood of Christ are received orally by:`,
+  [`Both worthy and unworthy communicants`,`The worthy only`,`The priest only`,`The clergy and the laity separately`,`No one`], `FC Ep VII`),
+M(`FC Ep VII rejects which of the following?`,
+  [`Transubstantiation`,`The real presence`,`Oral eating`,`Eating by the unworthy`,`The Words of Institution`], `FC Ep VII`),
+M(`FC Ep VIII teaches that the human nature of Christ, in personal union with the divine, has received:`,
+  [`All power in heaven and earth (Matt. 28:18)`,`No share in divine majesty`,`Only moral gifts`,`Omnipotence by merit`,`A new substance`], `FC Ep VIII`),
+M(`The doctrine that the attributes of each nature belong to the whole person of Christ is called:`,
+  [`Communicatio idiomatum`,`Homoousia`,`Perichoresis`,`Kenosis`,`Filioque`], `FC Ep VIII`),
+M(`FC Ep IX, concerning Christ's descent into hell, directs us to rely on:`,
+  [`The simple confession that Christ, after burial, descended into hell and destroyed its power, without speculation`,`Detailed theories of Limbo`,`A figurative interpretation`,`Zwingli's exegesis`,`The patristic consensus`], `FC Ep IX`),
+M(`FC Ep X teaches that in a time of confession the church should:`,
+  [`Not yield to the enemies even in matters otherwise indifferent`,`Always compromise`,`Defer to the emperor`,`Avoid ceremonies`,`Seek unanimity at any cost`], `FC Ep X`),
+M(`In FC XI, God's "foreknowledge" extends to all, while "predestination" or election applies to:`,
+  [`The children of God, who are saved`,`The damned`,`All men equally`,`The church's leaders`,`The baptized only`], `FC Ep XI`),
+M(`Which group is NOT condemned in FC Ep XII?`,
+  [`Pelagians`,`Anabaptists`,`Schwenkfeldians`,`New Arians`,`Antitrinitarians`], `FC Ep XII`),
+M(`The Book of Concord was published on June 25, 1580, marking:`,
+  [`The fiftieth anniversary of the presentation of the Augsburg Confession`,`The anniversary of the Diet of Worms`,`The founding of the Reformation`,`The Peace of Augsburg`,`Luther's death`], `Book of Concord (historical)`),
+
+T(`Formula of Concord, Solid Declaration I-V and Rule and Norm`, `Formula of Concord`),
+M(`In FC SD I, Flacius's claim that original sin is the substance of fallen human nature is compared with the error of the:`,
+  [`Manichaeans`,`Pelagians`,`Arians`,`Donatists`,`Montanists`], `FC SD I`),
+M(`The Weimar Disputation (1560) pitted Flacius against:`,
+  [`Victorinus Strigel`,`Martin Chemnitz`,`Georg Major`,`Andreas Osiander`,`Jakob Andreae`], `FC I (historical)`),
+M(`SD I teaches that original sin is:`,
+  [`A deep and horrible corruption of nature, not its substance`,`Mere weakness`,`A lack of ceremonial purity`,`An imitation of Adam`,`A physical disease only`], `FC SD I`),
+M(`SD II says that in spiritual matters the human will, before the Spirit's work, is:`,
+  [`Hostile to God and unable to prepare itself`,`Neutral`,`Cooperating`,`Slightly inclined`,`Free to choose faith`], `FC SD II`),
+M(`SD II likens man in conversion to a stone or block, but notes that unlike a stone he:`,
+  [`Resists God's work`,`Can move`,`Cooperates`,`Is neutral`,`Is stronger`], `FC SD II`),
+M(`SD II rejects the "three causes of conversion" theory, which lists the Holy Spirit, the Word, and also:`,
+  [`The human will`,`Baptism`,`The church`,`The magistrate`,`Reason`], `FC SD II`),
+M(`SD III teaches that Christ's obedience imputed to us includes:`,
+  [`His active and passive obedience`,`His passive obedience only`,`His divine nature`,`His miracles`,`His preaching`], `FC SD III`),
+M(`Andreas Osiander taught that we are justified by:`,
+  [`The essential indwelling righteousness of Christ's divine nature`,`Faith alone`,`Love`,`Works`,`Church membership`], `FC SD III`),
+M(`The Majoristic controversy concerned the statement that:`,
+  [`Good works are necessary for salvation`,`Faith alone justifies`,`Works are unneeded`,`The Law is abolished`,`Baptism saves`], `FC SD IV`),
+M(`According to SD V, the distinction between Law and Gospel is:`,
+  [`A particularly brilliant light that keeps God's Word rightly divided`,`Unimportant`,`Invented by Luther`,`Necessary for monks only`,`Applicable only to the Old Testament`], `FC SD V`),
+M(`SD V holds that the preaching of repentance belongs to:`,
+  [`Both the Law (which reveals sin) and the Gospel (which works faith)`,`The Law only`,`The Gospel only`,`The sacraments`,`The clergy`], `FC SD V`),
+M(`In the "Rule and Norm," the Scriptures alone are the judge, rule, and norm; the creeds and confessions are:`,
+  [`Witnesses and expositions of the faith`,`Equal to Scripture`,`Authorities above Scripture`,`Optional`,`Replaced by tradition`], `FC, Rule and Norm`),
+M(`Which version of the Augsburg Confession does the Formula embrace?`,
+  [`The unaltered Confession of 1530`,`The Variata of 1540`,`The Confutation`,`The Leipzig Interim`,`The Torgau Articles`], `FC, Rule and Norm`),
+
+T(`Formula of Concord, Solid Declaration VI-VIII`, `Formula of Concord`),
+M(`In FC SD VI, the "first use" of the Law is:`,
+  [`To maintain external discipline and keep order`,`To reveal sin`,`To guide the regenerate`,`To justify`,`To abolish ceremonies`], `FC SD VI`),
+M(`FC SD VI says the third use does not mean the regenerate are under the Law's:`,
+  [`Coercion and curse, since they are under grace`,`Instruction`,`Guidance`,`Admonition`,`Rule`], `FC SD VI`),
+M(`In FC SD VII, the Lutheran teaching on how bread and body are united is called:`,
+  [`Sacramental union`,`Hypostatic union`,`Consubstantiation`,`Impanation`,`Transubstantiation`], `FC SD VII`),
+M(`The "Capernaitic" notion of the Supper, rejected in the Formula, is that:`,
+  [`Christ's body is eaten in a gross, carnal way, torn and digested like other food`,`Christ's body is present`,`The bread is bread`,`The cup is withheld`,`Christ is spiritually present`], `FC SD VII`),
+M(`FC SD VII teaches that the Words of Institution are to be taken:`,
+  [`Simply and literally as Christ spoke them`,`Figuratively`,`Allegorically`,`Optionally`,`As a memorial`], `FC SD VII`),
+M(`According to SD VII, the unworthy who receive the Supper:`,
+  [`Receive Christ's body and blood to their judgment`,`Receive only bread and wine`,`Receive spiritual blessing`,`Are cleansed`,`Are excused`], `FC SD VII`),
+M(`Which Luther writing does FC cite as a confession of faith on the Supper?`,
+  [`Brief Confession Concerning the Holy Sacrament`,`The Bondage of the Will`,`On Christian Freedom`,`The Freedom of a Christian`,`Preface to Romans`], `FC SD VII`),
+M(`Zwingli's explanation of Christ's "exchange of attributes" as a figure of speech was called:`,
+  [`Alloeosis`,`Metonymy`,`Hyperbole`,`Synecdoche`,`Irony`], `FC SD VIII`),
+M(`SD VIII teaches that Christ's human nature:`,
+  [`Participates in the divine majesty by virtue of the personal union`,`Remains limited, with no share`,`Becomes divine in essence`,`Is mixed with the divine`,`Is absorbed by the divine`], `FC SD VIII`),
+M(`SD VIII appeals to the right hand of God as:`,
+  [`Not a specific place but God's almighty power and majesty`,`A throne in one corner of heaven`,`A temporary position`,`A symbol of rest`,`A place of waiting`], `FC SD VIII`),
+
+T(`Formula of Concord, Solid Declaration IX-XII and History`, `Formula of Concord`),
+M(`Luther's sermon at Torgau in 1533 is cited in SD IX on:`,
+  [`Christ's descent into hell`,`Predestination`,`Good works`,`The Law`,`The Supper`], `FC SD IX`),
+M(`FC X arose from the controversy following which imperial measure?`,
+  [`The Augsburg Interim of 1548`,`The Peace of Augsburg`,`The Edict of Worms`,`The Diet of Speyer (1529)`,`The Council of Trent`], `FC SD X`),
+M(`Adiaphora ("things indifferent") are ceremonies that:`,
+  [`God has neither commanded nor forbidden`,`God commands`,`Are always sinful`,`Are required for salvation`,`Are always optional regardless of circumstances`], `FC SD X`),
+M(`What does SD X insist about adiaphora in a time of confession?`,
+  [`Nothing is an adiaphoron when enemies force it to deny the truth`,`Everything is adiaphoron`,`Ceremonies should be abolished`,`Only clergy decide`,`Rulers decide`], `FC SD X`),
+M(`SD XI directs those troubled about election to seek assurance in:`,
+  [`Christ and the Gospel, not the hidden counsel of God`,`The hidden decree`,`Their own works`,`The Law`,`Private visions`], `FC SD XI`),
+M(`SD XI rejects the teaching that God predestined some to:`,
+  [`Damnation (reprobation)`,`Salvation`,`Faith`,`Perseverance`,`Adoption`], `FC SD XI`),
+M(`SD XI teaches that election is "in":`,
+  [`Christ`,`The Law`,`The church`,`The sacraments`,`Merit`], `FC SD XI`),
+M(`In SD XII, which group's teaching on civil office and oaths is rejected?`,
+  [`Anabaptists`,`Lutherans`,`Roman Catholics`,`Calvinists`,`Arians`], `FC SD XII`),
+M(`In SD XII, the Schwenkfeldians are rejected for teaching that:`,
+  [`Christ's flesh is deified and the Word works apart from external means`,`Baptism is invalid`,`Only the elect pray`,`Marriage is forbidden`,`Oaths are required`], `FC SD XII`),
+M(`Which Elector of Saxony sponsored the effort that produced the Formula of Concord?`,
+  [`August`,`Frederick the Wise`,`John Frederick`,`Maurice`,`John the Steadfast`], `FC (historical)`),
+M(`Jakob Andreae's earlier draft, produced with Chemnitz and others in the 1570s, was known as the:`,
+  [`Swabian Concord`,`Wittenberg Concord`,`Marburg Articles`,`Torgau Book`,`Bergen Book`], `FC (historical)`),
+M(`The Formula's final draft, completed in 1577, is known as the:`,
+  [`Bergen Book`,`Torgau Book`,`Swabian Concord`,`Maulbronn Formula`,`Wittenberg Concord`], `FC (historical)`),
+
+/* ---- ADD NEW QUESTIONS ABOVE THIS LINE ---- */
+];
+
+const FULL = `Full Survey (original 50)`;
+const BANK = RAW.filter(Boolean);
+BANK.forEach(b => { if (!b.unit) b.unit = FULL; });
+
+/* =====================================================================
+   APP: storage, tests, study, progress
+   ===================================================================== */
+const app = document.getElementById("app");
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+BANK.forEach(b => { b.id = H(b.q).toString(36); });
+const BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
+const SECTIONS = [...new Set(BANK.map(b => b.section))];
+const UNITS = [];
+BANK.forEach(b => {
+  let u = UNITS.find(x => x.name === b.unit);
+  if (!u) { u = {name: b.unit, group: b.unit === FULL ? "All documents" : b.section, n: 0}; UNITS.push(u); }
+  u.n++;
+});
+const GROUPS = [...new Set(UNITS.map(u => u.group))];
+document.getElementById("subtitle").textContent = `${BANK.length} questions in ${UNITS.length} ready-made tests, with study mode and progress tracking`;
+
+/* ---------- persistent storage ----------
+   Uses the Claude artifact storage if present, else the browser's own
+   storage, else memory only. Export/Import (Progress tab) always works. */
+const SKEY = "concordia-quiz-v1";
+const DAY = 864e5;
+const INTERVAL = [0, 0, 1, 3, 7, 21];            // days until review, by box
+let DB = {v: 1, attempts: [], q: {}, saved: [], days: []};
+let STORE_MODE = "memory";
+
+function mergeDB(o) {
+  if (!o || typeof o !== "object") return;
+  DB = Object.assign({v: 1, attempts: [], q: {}, saved: [], days: []}, o);
+}
+async function dbLoad() {
+  if (window.storage && typeof window.storage.get === "function") {
+    STORE_MODE = "claude";
+    try { const r = await window.storage.get(SKEY, false); if (r && r.value) mergeDB(JSON.parse(r.value)); } catch (e) {}
+    return;
+  }
+  try {
+    localStorage.setItem("__t", "1"); localStorage.removeItem("__t");
+    STORE_MODE = "local";
+    const v = localStorage.getItem(SKEY);
+    if (v) mergeDB(JSON.parse(v));
+  } catch (e) { STORE_MODE = "memory"; }
+}
+function dbSave() {
+  const s = JSON.stringify(DB);
+  try {
+    if (STORE_MODE === "claude") window.storage.set(SKEY, s, false).catch(() => {});
+    else if (STORE_MODE === "local") localStorage.setItem(SKEY, s);
+  } catch (e) {}
+}
+
+/* ---------- learning model (Leitner boxes) ---------- */
+function dayStr(t) { const d = new Date(t); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function streak() {
+  const set = new Set(DB.days); let n = 0; const d = new Date();
+  if (!set.has(dayStr(d))) d.setDate(d.getDate() - 1);
+  while (set.has(dayStr(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function record(b, ok) {
+  const s = DB.q[b.id] || (DB.q[b.id] = {seen: 0, right: 0, box: 0, due: 0, last: 0});
+  s.seen++;
+  if (ok) { s.right++; s.box = Math.min(5, Math.max(1, s.box) + 1); } else { s.box = 1; }
+  s.last = Date.now();
+  s.due = s.last + INTERVAL[s.box] * DAY;
+  const today = dayStr(s.last);
+  if (!DB.days.includes(today)) { DB.days.push(today); if (DB.days.length > 400) DB.days.shift(); }
+}
+const stOf = b => DB.q[b.id];
+const FILTERS = {all: "All questions", unseen: "Never seen", weak: "Missed before or weak", due: "Due for review", notmastered: "Not yet mastered"};
+function poolFor(filter, base) {
+  const now = Date.now();
+  switch (filter) {
+    case "unseen": return base.filter(b => !stOf(b));
+    case "weak": return base.filter(b => { const s = stOf(b); return s && (s.box <= 1 || s.right / s.seen < 0.7); });
+    case "due": return base.filter(b => { const s = stOf(b); return s && s.due <= now; });
+    case "notmastered": return base.filter(b => { const s = stOf(b); return !s || s.box < 4; });
+    default: return base;
+  }
+}
+function buildStudy(scope, mode, size) {
+  const base = scope === "all" ? BANK : BANK.filter(b => b.section === scope);
+  let q;
+  if (mode === "weak") q = shuffle(poolFor("weak", base));
+  else if (mode === "practice") q = shuffle(poolFor("notmastered", base));
+  else {
+    const due = poolFor("due", base).sort((a, b) => stOf(a).box - stOf(b).box);
+    q = [...due, ...shuffle(poolFor("unseen", base))];
+    if (!q.length) q = shuffle(poolFor("notmastered", base));
+  }
+  if (!q.length) q = shuffle(base);
+  return q.slice(0, size);
+}
+
+/* ---------- preferences and setup screens ---------- */
+const PREF = {tab: "ready", shQ: true, shC: false, fb: "now", secs: null, count: 25, filter: "all", sScope: "all", sMode: "smart", sSize: 20};
+let S = null;
+
+function readPrefs() {
+  if ($("shQ")) PREF.shQ = $("shQ").checked;
+  if ($("shC")) PREF.shC = $("shC").checked;
+  if ($("fb")) PREF.fb = $("fb").value;
+  if ($("secs")) PREF.secs = [...document.querySelectorAll("#secs input")].filter(b => b.checked).map(b => SECTIONS[+b.value]);
+  if ($("count")) PREF.count = Math.max(1, +$("count").value || 1);
+  if ($("filter")) PREF.filter = $("filter").value;
+  if ($("sScope")) PREF.sScope = $("sScope").value;
+  if ($("sMode")) PREF.sMode = $("sMode").value;
+  if ($("sSize")) PREF.sSize = +$("sSize").value;
+}
+
+function showSetup() {
+  S = null;
+  const t = PREF.tab;
+  const tabs = [["ready", "Ready-made"], ["build", "Build"], ["study", "Study"], ["progress", "Progress"]];
+  app.innerHTML = `<div class="tabs">${tabs.map(([k, l]) => `<button class="tab ${t === k ? "on" : ""}" data-t="${k}">${l}</button>`).join("")}</div><div id="pane"></div>`;
+  document.querySelectorAll(".tab").forEach(b => b.onclick = () => { readPrefs(); PREF.tab = b.dataset.t; showSetup(); });
+  ({ready: paneReady, build: paneBuild, study: paneStudy, progress: paneProgress})[t]();
+}
+
+function settingsHTML() {
+  return `<div class="panel"><h2>Settings</h2><div class="opts">
+    <label class="row"><input type="checkbox" id="shQ" ${PREF.shQ ? "checked" : ""}> Shuffle question order</label>
+    <label class="row"><input type="checkbox" id="shC" ${PREF.shC ? "checked" : ""}> Shuffle answer choices</label>
+    <label class="row">Feedback
+      <span class="n"><select id="fb">
+        <option value="now" ${PREF.fb !== "end" ? "selected" : ""}>After each question</option>
+        <option value="end" ${PREF.fb === "end" ? "selected" : ""}>At the end (test mode)</option>
+      </select></span></label></div></div>`;
+}
+
+function badge(key) {
+  const a = DB.attempts.filter(x => x.key === key);
+  if (!a.length) return "";
+  const pct = x => Math.round(x.right / x.n * 100);
+  return ` Best ${Math.max(...a.map(pct))}%, last ${pct(a[a.length - 1])}%, ${a.length} attempt${a.length > 1 ? "s" : ""}.`;
+}
+function describeSaved(s) {
+  const where = !s.secs || s.secs.length === SECTIONS.length ? "all documents" : s.secs.join(", ");
+  const how = s.ids ? "Same questions every time" : "Fresh draw each time";
+  return `${how}, ${s.ids ? s.ids.length : s.count} questions, ${where}${s.filter && s.filter !== "all" ? ", " + FILTERS[s.filter].toLowerCase() : ""}.`;
+}
+
+function paneReady() {
+  const pane = $("pane");
+  let html = settingsHTML();
+  if (DB.saved.length) {
+    html += `<div class="panel"><h2>My tests</h2>${DB.saved.map((s, i) => `
+      <div class="trow"><div class="t">${esc(s.name)}<span class="sub">${esc(describeSaved(s))}${esc(badge("saved:" + s.id))}</span></div>
+      <button class="btn sm" data-s="${i}">Start</button><button class="link" data-d="${i}">Delete</button></div>`).join("")}</div>`;
+  }
+  html += GROUPS.map(g => `<div class="panel"><h2>${esc(g)}</h2>${UNITS.map((u, i) => u.group !== g ? "" : `
+    <div class="trow"><div class="t">${esc(u.name)}<span class="sub">${u.n} questions.${esc(badge("unit:" + u.name))}</span></div>
+    <button class="btn sm" data-u="${i}">Start</button></div>`).join("")}</div>`).join("");
+  pane.innerHTML = html;
+  document.querySelectorAll("[data-u]").forEach(b => b.onclick = () => {
+    readPrefs();
+    const u = UNITS[+b.dataset.u];
+    startQuiz(BANK.filter(x => x.unit === u.name), {title: u.name, key: "unit:" + u.name, shQ: PREF.shQ, shC: PREF.shC, fb: PREF.fb});
+  });
+  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => startSaved(DB.saved[+b.dataset.s]));
+  document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => {
+    const s = DB.saved[+b.dataset.d];
+    if (confirm(`Delete "${s.name}"? Your attempt history stays in Progress.`)) { DB.saved.splice(+b.dataset.d, 1); dbSave(); showSetup(); }
+  });
+}
+
+function buildPool(cfg) {
+  if (cfg.ids) return cfg.ids.map(id => BY_ID[id]).filter(Boolean);
+  return poolFor(cfg.filter || "all", BANK.filter(b => cfg.secs.includes(b.section)));
+}
+function startSaved(s) {
+  let pool = buildPool(s);
+  if (!s.ids) pool = shuffle(pool).slice(0, s.count);
+  startQuiz(pool, {title: s.name, key: "saved:" + s.id, shQ: s.shQ, shC: s.shC, fb: s.fb});
+}
+
+function paneBuild() {
+  const pane = $("pane");
+  const secs = PREF.secs || SECTIONS.slice();
+  const counts = Object.fromEntries(SECTIONS.map(s => [s, BANK.filter(b => b.section === s).length]));
+  pane.innerHTML = settingsHTML() + `
+    <div class="panel"><h2>Documents</h2>
+      <div class="opts" id="secs">${SECTIONS.map((s, i) => `<label class="row"><input type="checkbox" value="${i}" ${secs.includes(s) ? "checked" : ""}> ${esc(s)} <span class="n">${counts[s]}</span></label>`).join("")}</div>
+      <p style="margin:8px 0 0"><button class="link" id="all">Select all</button> &nbsp; <button class="link" id="none">Clear</button></p>
+      <p class="hint">Draws from every question in the chosen documents, including the ready-made tests.</p></div>
+    <div class="panel"><h2>Questions</h2><div class="opts">
+      <label class="row">Number of questions <span class="n"><input type="number" id="count" min="1" max="${BANK.length}" value="${PREF.count}" style="width:80px"></span></label>
+      <label class="row">Draw from <span class="n"><select id="filter">${Object.entries(FILTERS).map(([k, v]) => `<option value="${k}" ${PREF.filter === k ? "selected" : ""}>${v}</option>`).join("")}</select></span></label></div></div>
+    <div class="actions"><button class="btn" id="start">Start test</button></div>
+    <div class="panel" style="margin-top:16px"><h2>Save this format</h2>
+      <p class="hint" style="margin-top:0">Saves these settings as a test in "My tests" on the Ready-made tab, so you can retake it and watch your scores.</p>
+      <label class="row">Name <span class="n"><input type="text" id="svname" placeholder="e.g. AC weak spots" style="width:200px"></span></label>
+      <label class="row"><input type="checkbox" id="lock"> Lock the exact questions (same test every time)</label>
+      <div class="actions"><button class="btn alt sm" id="svbtn">Save format</button> <span class="msg" id="svmsg"></span></div></div>`;
+  const boxes = () => [...document.querySelectorAll("#secs input")];
+  $("all").onclick = () => boxes().forEach(b => b.checked = true);
+  $("none").onclick = () => boxes().forEach(b => b.checked = false);
+  const cfg = () => {
+    readPrefs();
+    if (!PREF.secs.length) { alert("Choose at least one document."); return null; }
+    return {secs: PREF.secs.slice(), filter: PREF.filter, count: PREF.count, shQ: PREF.shQ, shC: PREF.shC, fb: PREF.fb};
+  };
+  $("start").onclick = () => {
+    const c = cfg(); if (!c) return;
+    const pool = shuffle(buildPool(c)).slice(0, c.count);
+    startQuiz(pool, {title: "Custom test", key: "custom", shQ: c.shQ, shC: c.shC, fb: c.fb});
+  };
+  $("svbtn").onclick = () => {
+    const c = cfg(); if (!c) return;
+    const name = $("svname").value.trim();
+    if (!name) { $("svmsg").textContent = "Give it a name first."; return; }
+    const lock = $("lock").checked;
+    const s = Object.assign({id: Date.now().toString(36), name, created: Date.now()}, c);
+    if (lock) {
+      const pool = shuffle(buildPool(c)).slice(0, c.count);
+      if (!pool.length) { $("svmsg").textContent = "No questions match those settings yet."; return; }
+      s.ids = pool.map(b => b.id);
+    }
+    DB.saved.push(s); dbSave();
+    $("svmsg").textContent = `Saved "${name}". Find it under My tests on the Ready-made tab.`;
+  };
+}
+
+function studyInfo() {
+  const scope = $("sScope").value;
+  const base = scope === "all" ? BANK : BANK.filter(b => b.section === scope);
+  const c = f => poolFor(f, base).length;
+  const mastered = base.filter(b => stOf(b) && stOf(b).box >= 4).length;
+  $("sInfo").textContent = `In this scope: ${c("due")} due for review, ${c("unseen")} new, ${c("weak")} weak, ${mastered} mastered of ${base.length}.`;
+}
+function paneStudy() {
+  $("pane").innerHTML = `
+    <div class="panel"><h2>Study</h2>
+      <p class="hint" style="margin-top:0">Study mode asks what you are due to review first, then new questions. A right answer moves a question up through five boxes (seen again after 1, 3, 7, then 21 days). A miss sends it back to box 1 and asks it again at the end of the session. Each answer shows the reference so you can learn it, not just score it.</p>
+      <div class="opts">
+        <label class="row">Document <span class="n"><select id="sScope"><option value="all">All documents</option>${SECTIONS.map(s => `<option value="${esc(s)}" ${PREF.sScope === s ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></span></label>
+        <label class="row">Session <span class="n"><select id="sMode">
+          <option value="smart" ${PREF.sMode === "smart" ? "selected" : ""}>Smart review (due first, then new)</option>
+          <option value="weak" ${PREF.sMode === "weak" ? "selected" : ""}>Weak spots only</option>
+          <option value="practice" ${PREF.sMode === "practice" ? "selected" : ""}>Anything not yet mastered</option></select></span></label>
+        <label class="row">Length <span class="n"><select id="sSize">${[10, 20, 40].map(n => `<option value="${n}" ${PREF.sSize === n ? "selected" : ""}>${n} questions</option>`).join("")}</select></span></label></div>
+      <p class="hint" id="sInfo"></p></div>
+    <button class="btn" id="sStart">Start studying</button>`;
+  $("sScope").value = PREF.sScope;
+  $("sScope").onchange = studyInfo; studyInfo();
+  $("sStart").onclick = () => {
+    readPrefs();
+    const q = buildStudy(PREF.sScope, PREF.sMode, PREF.sSize);
+    startQuiz(q, {title: "Study: " + (PREF.sScope === "all" ? "all documents" : PREF.sScope), key: "study", mode: "study", fb: "now", shQ: false, shC: true});
+  };
+}
+
+function paneProgress() {
+  const now = Date.now();
+  const known = Object.keys(DB.q).filter(id => BY_ID[id]).map(id => DB.q[id]);
+  const seen = known.length, mastered = known.filter(s => s.box >= 4).length, due = known.filter(s => s.due <= now).length;
+  const tr = known.reduce((a, s) => a + s.right, 0), ts = known.reduce((a, s) => a + s.seen, 0);
+  const acc = ts ? Math.round(tr / ts * 100) : 0;
+  const tests = DB.attempts.filter(a => a.mode !== "study");
+  const spark = tests.slice(-14);
+  const weak = BANK.filter(b => { const s = stOf(b); return s && s.seen >= 2 && s.right / s.seen < 0.7; })
+    .sort((a, b) => stOf(a).right / stOf(a).seen - stOf(b).right / stOf(b).seen).slice(0, 8);
+  const status = {claude: "Progress is saved automatically in this view.", local: "Progress is saved automatically in this browser.", memory: "This view cannot save between visits. Use Export below to keep your progress."}[STORE_MODE];
+  $("pane").innerHTML = `
+    <div class="cards">
+      <div class="card"><b>${seen} / ${BANK.length}</b>questions seen</div>
+      <div class="card"><b>${mastered}</b>mastered (box 4 or 5)</div>
+      <div class="card"><b>${acc}%</b>overall accuracy</div>
+      <div class="card"><b>${due}</b>due for review now</div>
+      <div class="card"><b>${streak()}</b>day study streak</div>
+      <div class="card"><b>${DB.attempts.length}</b>sessions and tests</div>
+    </div>
+    <div class="panel"><h2>By document</h2>${SECTIONS.map(sec => {
+      const qs = BANK.filter(b => b.section === sec), st = qs.map(stOf).filter(Boolean);
+      const m = st.filter(s => s.box >= 4).length, r = st.reduce((a, s) => a + s.right, 0), n = st.reduce((a, s) => a + s.seen, 0);
+      return `<div class="drow"><div class="dn">${esc(sec)}<span class="sub">${st.length} of ${qs.length} seen, ${m} mastered, ${n ? Math.round(r / n * 100) : 0}% accuracy</span></div>
+        <div class="meter" title="mastered"><i style="width:${Math.round(m / qs.length * 100)}%"></i></div></div>`;
+    }).join("")}<p class="hint">Bars show how much of each document you have mastered.</p></div>
+    <div class="panel"><h2>Recent test scores</h2>${spark.length ? `
+      <div class="spark">${spark.map(a => { const p = Math.round(a.right / a.n * 100); return `<i style="height:${Math.max(p, 3)}%" title="${esc(a.title)}: ${p}%"></i>`; }).join("")}</div>
+      <table style="margin-top:10px">${tests.slice(-8).reverse().map(a => `<tr><td>${esc(a.title)}<br><span class="sub">${new Date(a.t).toLocaleDateString()}</span></td><td>${a.right} / ${a.n} (${Math.round(a.right / a.n * 100)}%)</td></tr>`).join("")}</table>` : `<p class="hint" style="margin:0">No tests yet. Take one from the Ready-made tab.</p>`}</div>
+    <div class="panel"><h2>Weak spots</h2>${weak.length ? `
+      <table>${weak.map(b => `<tr><td>${esc(b.q)}<br><span class="sub">${esc(b.ref)}</span></td><td>${stOf(b).right} / ${stOf(b).seen}</td></tr>`).join("")}</table>
+      <div class="actions"><button class="btn sm" id="drill">Drill weak spots</button></div>` : `<p class="hint" style="margin:0">Nothing flagged yet. Questions appear here after you miss them more than they are answered correctly.</p>`}</div>
+    <div class="panel"><h2>Your data</h2><p class="hint" style="margin-top:0">${status}</p>
+      <div class="actions"><button class="btn alt sm" id="exp">Export backup</button>
+      <label class="btn alt sm" style="display:inline-block">Import backup<input type="file" id="imp" accept=".json,application/json" hidden></label>
+      <button class="btn alt sm" id="reset">Reset progress</button></div><p class="msg" id="dmsg"></p></div>`;
+  if ($("drill")) $("drill").onclick = () => {
+    startQuiz(buildStudy("all", "weak", 20), {title: "Study: weak spots", key: "study", mode: "study", fb: "now", shQ: false, shC: true});
+  };
+  $("exp").onclick = () => {
+    const blob = new Blob([JSON.stringify(DB, null, 1)], {type: "application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "concordia-quiz-progress.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    $("dmsg").textContent = "Backup downloaded. Keep the file somewhere safe.";
+  };
+  $("imp").onchange = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const o = JSON.parse(r.result);
+        if (!o || typeof o.q !== "object" || !Array.isArray(o.attempts)) throw new Error("bad");
+        if (!confirm("Replace your current progress with this backup?")) return;
+        mergeDB(o); dbSave(); showSetup();
+      } catch (err) { $("dmsg").textContent = "That file is not a valid backup."; }
+    };
+    r.readAsText(f);
+  };
+  $("reset").onclick = () => {
+    if (confirm("Erase all progress, attempts, and saved tests? This cannot be undone.")) { DB = {v: 1, attempts: [], q: {}, saved: [], days: []}; dbSave(); showSetup(); }
+  };
+}
+
+/* ---------- quiz engine (tests and study) ---------- */
+const mkItem = (b, sh, retry) => ({b, order: sh ? shuffle([0, 1, 2, 3, 4]) : [0, 1, 2, 3, 4], picked: null, retry: !!retry});
+
+function startQuiz(pool, o) {
+  if (!pool.length) { alert("No questions match those settings yet."); return; }
+  if (o.shQ) pool = shuffle(pool);
+  S = {mode: o.mode || "test", title: o.title, key: o.key, fb: o.fb || "now", shC: !!o.shC, i: 0, logged: false,
+       items: pool.map(b => mkItem(b, o.shC))};
+  showQuestion();
+}
+
+function showQuestion() {
+  const it = S.items[S.i], b = it.b, n = S.items.length;
+  const revealed = it.picked !== null && S.fb === "now";
+  app.innerHTML = `
+    <p class="title">${esc(S.title)}</p>
+    <div class="bar"><i style="width:${(S.i / n) * 100}%"></i></div>
+    <div class="meta"><span>Question ${S.i + 1} of ${n}${it.retry ? ", asked again" : ""}</span><span>${esc(b.section)}</span></div>
+    <p class="qtext">${esc(b.q)}</p>
+    <div id="choices">
+      ${it.order.map((orig, pos) => {
+        let cls = "choice";
+        if (it.picked === pos) cls += revealed ? (orig === b.answer ? " good" : " bad") : " sel";
+        else if (revealed && orig === b.answer) cls += " good";
+        return `<button class="${cls}" data-pos="${pos}" ${it.picked !== null ? "disabled" : ""}><span class="l">${"ABCDE"[pos]}.</span><span>${esc(b.choices[orig])}</span></button>`;
+      }).join("")}
+    </div>
+    ${revealed ? feedback(it) : ""}
+    <div class="actions">
+      <button class="btn" id="next" ${it.picked === null ? "disabled" : ""}>${S.i === n - 1 ? "Finish" : "Next"}</button>
+      <button class="btn alt" id="quit">${S.mode === "study" ? "End session" : "Quit"}</button>
+    </div>
+    <p class="meta" style="margin-top:14px">Keys: <span><kbd>A</kbd>-<kbd>E</kbd> to answer, <kbd>Enter</kbd> for next</span></p>`;
+  document.querySelectorAll(".choice").forEach(btn => btn.onclick = () => pick(+btn.dataset.pos));
+  $("next").onclick = next;
+  $("quit").onclick = () => {
+    if (S.mode === "study") showResults();
+    else if (confirm("Quit this test? Questions you already answered still count toward your progress.")) showSetup();
+  };
+}
+
+function feedback(it) {
+  const b = it.b, ok = it.order[it.picked] === b.answer;
+  const letter = "ABCDE"[it.order.indexOf(b.answer)];
+  let extra = "";
+  if (S.mode === "study" && !it.retry && DB.q[b.id]) {
+    const s = DB.q[b.id];
+    extra = `<div class="ref">Box ${s.box} of 5. ${s.box <= 1 ? "You will see it again at the end of this session." : "Next review in " + INTERVAL[s.box] + " day" + (INTERVAL[s.box] > 1 ? "s" : "") + "."}</div>`;
+  }
+  return `<div class="fb"><b class="${ok ? "ok" : "no"}">${ok ? "Correct." : "Incorrect."}</b> The answer is ${letter}: ${esc(b.choices[b.answer])}
+    <div class="ref">${esc(b.ref)}${b.note ? " &mdash; " + esc(b.note) : ""}</div>${extra}</div>`;
+}
+
+function pick(pos) {
+  const it = S.items[S.i];
+  if (it.picked !== null) return;
+  it.picked = pos;
+  const ok = it.order[pos] === it.b.answer;
+  if (!it.retry) {
+    record(it.b, ok);
+    if (S.mode === "study" && !ok) S.items.push(mkItem(it.b, S.shC, true));
+    dbSave();
+  }
+  showQuestion();
+  $("next").focus();
+}
+
+function next() {
+  if (S.items[S.i].picked === null) return;
+  if (S.i < S.items.length - 1) { S.i++; showQuestion(); } else showResults();
+}
+
+function showResults() {
+  const items = S.items.filter(it => !it.retry && it.picked !== null), n = items.length;
+  if (!n) { showSetup(); return; }
+  const isRight = it => it.order[it.picked] === it.b.answer;
+  const right = items.filter(isRight), missed = items.filter(it => !isRight(it));
+  const pct = Math.round(right.length / n * 100);
+  const keyed = S.key && S.key !== "study" && S.key !== "custom";
+  const prior = keyed ? DB.attempts.filter(a => a.key === S.key) : [];
+  if (!S.logged) {
+    DB.attempts.push({t: Date.now(), key: S.key || "custom", title: S.title, n, right: right.length, mode: S.mode});
+    if (DB.attempts.length > 500) DB.attempts.shift();
+    S.logged = true; dbSave();
+  }
+  const priorBest = prior.length ? Math.max(...prior.map(a => Math.round(a.right / a.n * 100))) : null;
+  const bySec = {};
+  items.forEach(it => { const s = it.b.section; bySec[s] = bySec[s] || [0, 0]; bySec[s][1]++; if (isRight(it)) bySec[s][0]++; });
+  const canSave = S.mode !== "study";
+  app.innerHTML = `
+    <p class="title">${esc(S.title)}</p>
+    <div class="panel">
+      <p class="score">${right.length} / ${n}</p>
+      <p style="margin:0;color:var(--muted)">${pct}% correct${S.mode === "study" ? " on the first try" : ""}${priorBest !== null ? `. Previous best on this test: ${priorBest}%.` : ""}</p>
+      <div class="actions">
+        ${missed.length ? `<button class="btn" id="retry">${S.mode === "study" ? "Study the" : "Retry"} ${missed.length} missed</button>` : ""}
+        <button class="btn alt" id="again">Back to all tests</button>
+        <button class="btn alt" id="prog">See progress</button>
+      </div>
+    </div>
+    ${Object.keys(bySec).length > 1 ? `<div class="panel"><h2>By document</h2>
+      <table>${Object.entries(bySec).map(([s, [r, t]]) => `<tr><td>${esc(s)}</td><td>${r} / ${t}</td></tr>`).join("")}</table></div>` : ""}
+    ${canSave ? `<div class="panel"><h2>Save as a ready-made test</h2>
+      <p class="hint" style="margin-top:0">Keeps these exact ${n} questions under My tests so you can retake them and compare scores.</p>
+      <label class="row">Name <span class="n"><input type="text" id="svname" value="${esc(S.title === "Custom test" ? "" : S.title + " (my copy)")}" style="width:200px"></span></label>
+      <div class="actions"><button class="btn alt sm" id="svbtn">Save exact questions</button> <span class="msg" id="svmsg"></span></div></div>` : ""}
+    ${missed.length ? `<div class="panel"><h2>Missed questions</h2>${missed.map(it => {
+        const b = it.b, yours = b.choices[it.order[it.picked]];
+        return `<div class="miss"><p><b>${esc(b.q)}</b></p>
+          <p>Your answer: ${esc(yours)}</p>
+          <p style="color:var(--good)">Correct: ${esc(b.choices[b.answer])}</p>
+          <p class="fb ref" style="margin:6px 0 0">${esc(b.ref)}${b.note ? " &mdash; " + esc(b.note) : ""}</p></div>`;
+      }).join("")}</div>` : `<div class="panel"><p style="margin:0">No missed questions.</p></div>`}`;
+  $("again").onclick = () => { PREF.tab = "ready"; showSetup(); };
+  $("prog").onclick = () => { PREF.tab = "progress"; showSetup(); };
+  const r = $("retry");
+  if (r) r.onclick = () => startQuiz(missed.map(m => m.b), {
+    title: S.mode === "study" ? S.title : S.title.replace(/ \(missed\)$/, "") + " (missed)",
+    key: S.mode === "study" ? "study" : "retry", mode: S.mode, fb: "now", shQ: true, shC: S.shC });
+  if ($("svbtn")) $("svbtn").onclick = () => {
+    const name = $("svname").value.trim();
+    if (!name) { $("svmsg").textContent = "Give it a name first."; return; }
+    DB.saved.push({id: Date.now().toString(36), name, created: Date.now(), ids: items.map(it => it.b.id),
+      secs: [...new Set(items.map(it => it.b.section))], count: n, filter: "all", shQ: PREF.shQ, shC: PREF.shC, fb: PREF.fb});
+    dbSave();
+    $("svmsg").textContent = `Saved "${name}" under My tests.`;
+    $("svbtn").disabled = true;
+  };
+}
+
+document.addEventListener("keydown", e => {
+  if (!S || !$("choices")) return;
+  if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+  const k = e.key.toUpperCase();
+  if (k.length === 1 && "ABCDE".includes(k)) pick("ABCDE".indexOf(k));
+  else if (e.key === "Enter" && document.activeElement.tagName !== "BUTTON") next();
+});
+
+app.innerHTML = `<p class="hint">Loading your progress...</p>`;
+dbLoad().then(showSetup);
+</script>
+</body>
+</html>
